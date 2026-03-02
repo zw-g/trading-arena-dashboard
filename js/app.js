@@ -11,14 +11,22 @@ function renderPaper() {
   const keys = stratOrder(Object.keys(strats));
   const cap = sess.initial_capital || 10000;
 
-  /* ── Strategy Cards (Level 1) ── */
+  /* ── Strategy Cards (Level 1) — sorted by rank ── */
+  const ranked = keys.map(k => {
+    const s = strats[k], cur = s.current || {};
+    return { k, ret: cur.return_pct || 0 };
+  }).sort((a, b) => b.ret - a.ret);
+  const rankedKeys = ranked.map(r => r.k);
+
   let h = '<div class="sg">';
-  keys.forEach(k => {
+  rankedKeys.forEach((k, ri) => {
     const s = strats[k], c = rc(k), m = getMeta(s, k), cur = s.current || {};
     const addedBadge = makeAddedBadge(m, sess.start_date);
     const verBadge = m.version ? `<span class="badge badge-ver">v${esc(m.version)}</span>` : '';
+    const rankIcon = MEDALS[ri] || (ri + 1);
     h += `<div class="sc" style="--sc-c:${c}" onclick="onCardClick(this,'${k}','paper')" data-key="${k}">
       <div class="sc-top">
+        <span class="sc-rank">${rankIcon}</span>
         <span class="sc-dot" style="background:${c}"></span>
         <span class="sc-name" data-key="${k}" data-src="paper"
           onmouseenter="ttEnter(this,'paper')" onmouseleave="ttLeave()"
@@ -27,7 +35,7 @@ function renderPaper() {
       </div>
       <div class="sc-nav ${pc(cur.return_pct)}">${fm(cur.nav)}</div>
       <div class="sc-ret ${pc(cur.return_pct)}">${fp(cur.return_pct)}</div>
-      <div class="sc-sub"><span>${cur.positions || 0} ${T('pos_count')}</span><span>${cur.trades || 0} ${T('trades')}</span><span>${T('max_dd')} ${fmt(cur.max_drawdown, 1)}%</span></div>
+      <div class="sc-metrics"><span>${T('sharpe')} ${fmt(s.sharpe, 2)}</span><span>${T('max_dd')} ${fmt(cur.max_drawdown, 1)}%</span><span>${T('win_rate')} ${fmt(s.win_rate, 1)}%</span></div>
     </div>`;
   });
   h += '</div>';
@@ -75,6 +83,7 @@ function renderPaper() {
 
   out.innerHTML = h;
   updateStaticText();
+  updateScoreboard();
   rPNav(keys, strats, cap);
   rPSec(keys, strats);
   makeSortable('pLb');
@@ -181,6 +190,7 @@ function renderBt() {
 
   out.innerHTML = h;
   updateStaticText();
+  updateScoreboard();
   rBRet(keys, strats, run);
   rBHM(keys, strats);
   makeSortable('bSt');

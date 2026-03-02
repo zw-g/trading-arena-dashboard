@@ -96,6 +96,60 @@ function switchTab(t) {
     if (isTarget) { void p.offsetWidth; p.classList.add('on'); }
   });
   updateStaticText();
+  updateScoreboard();
+}
+
+/* ═══════════════════════════════════════════════════════
+   ARENA SCOREBOARD
+   ═══════════════════════════════════════════════════════ */
+function updateScoreboard() {
+  const el = document.getElementById('scoreboard');
+  if (!el) return;
+
+  let items = [];
+
+  if (currentTab === 'paper' && PD?.sessions?.length) {
+    const idx = parseInt(document.getElementById('sSel')?.value) || 0;
+    const sess = PD.sessions[idx];
+    if (sess) {
+      const strats = sess.strategies || {};
+      items = Object.keys(strats).map(k => {
+        const s = strats[k], cur = s.current || {};
+        return { key: k, name: displayName(s, k), ret: cur.return_pct || 0 };
+      }).sort((a, b) => b.ret - a.ret);
+    }
+  } else if (currentTab === 'bt' && BD?.runs?.length) {
+    const idx = parseInt(document.getElementById('bSel')?.value) || 0;
+    const run = BD.runs[idx];
+    if (run) {
+      const strats = run.strategies || {};
+      items = Object.keys(strats).map(k => {
+        const s = strats[k];
+        return { key: k, name: displayName(s, k), ret: s.total_return || 0 };
+      }).sort((a, b) => b.ret - a.ret);
+      if (run.spy_return != null) {
+        items.push({ key: 'SPY', name: 'SPY', ret: run.spy_return, isSpy: true });
+      }
+    }
+  }
+
+  if (!items.length) { el.innerHTML = ''; return; }
+
+  let html = '<div class="scoreboard-track">';
+  items.forEach((item, i) => {
+    const medal = MEDALS[i] || '';
+    const retClass = pc(item.ret);
+    const color = item.isSpy ? 'var(--c-spy)' : rc(item.key);
+    if (i > 0) html += '<span class="sb-sep">·</span>';
+    html += `<span class="sb-item">`;
+    if (!item.isSpy) html += `<span class="sb-rank">#${i + 1}</span>`;
+    if (medal && !item.isSpy) html += `<span class="sb-medal">${medal}</span>`;
+    html += `<span class="sb-name" style="color:${color}">${esc(item.name)}</span>`;
+    html += `<span class="sb-ret ${retClass}">${fp(item.ret)}</span>`;
+    html += `</span>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
 }
 
 /* ═══════════════════════════════════════════════════════

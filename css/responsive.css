@@ -2,7 +2,7 @@
    RESPONSIVE — Tablet
    ═══════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .sg { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .sg { grid-template-columns: repeat(2, 1fr); }
   .twocol { grid-template-columns: 1fr; }
   .dw { max-width: 200px; }
   .skel-grid { grid-template-columns: 1fr 1fr; }
@@ -23,7 +23,11 @@
   .pane { padding: 16px 16px 40px; }
   .sg { grid-template-columns: 1fr 1fr; gap: 10px; }
   .sc { padding: 14px 14px; }
-  .sc-nav { font-size: 1.3rem; }
+  .sc-nav { font-size: 1.4rem; }
+  .scoreboard { height: 44px; }
+  .scoreboard-track { padding: 0 16px; }
+  .tabs-nav { padding: 8px 16px; }
+  .tabs-toggle { padding: 3px; }
   .box { padding: 14px; margin-bottom: 16px; }
   .box canvas { max-height: 240px; }
   .sel select { min-width: 0; width: 100%; }
@@ -57,6 +61,8 @@
   .sg { grid-template-columns: 1fr; }
   .sc-sub span::after { display: none; }
   .sc-sub { flex-direction: column; gap: 1px; }
+  .sc-metrics span::after { display: none; }
+  .sc-metrics { flex-direction: column; gap: 1px; }
   .tab-btn { padding: 5px 10px; font-size: .76rem; }
   .bt-metrics { grid-template-columns: repeat(2, 1fr); }
   .bt-info-row { flex-direction: column; }

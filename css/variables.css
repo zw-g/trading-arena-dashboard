@@ -78,6 +78,9 @@
   --info-bg: rgba(59,130,246,0.1);
   --info-text: #2563eb;
 
+  /* Toggle container */
+  --toggle-bg: #e2e8f0;
+
   /* Shared tokens */
   --radius: 12px;
   --radius-sm: 8px;
@@ -125,6 +128,9 @@
   --c-c: #34d399;
   --c-d: #fbbf24;
   --c-e: #f472b6;
+
+  /* Toggle container */
+  --toggle-bg: #334155;
 
   /* Status colors (dark variants) */
   --success-bg: rgba(52,211,153,0.15);

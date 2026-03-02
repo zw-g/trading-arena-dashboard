@@ -52,11 +52,16 @@
   </div>
 </header>
 
-<!-- Tabs -->
+<!-- Arena Scoreboard Banner -->
+<div class="scoreboard" id="scoreboard"></div>
+
+<!-- Data Source Toggle -->
 <nav class="tabs-nav">
-  <button class="tab-btn on" data-t="paper" onclick="switchTab('paper')">📋 Paper Trading</button>
-  <button class="tab-btn" data-t="bt" onclick="switchTab('bt')">📊 Backtests</button>
-  <button class="tab-btn" data-t="live" onclick="switchTab('live')">🟢 Live Trading</button>
+  <div class="tabs-toggle">
+    <button class="tab-btn on" data-t="paper" onclick="switchTab('paper')">📋 Paper Trading</button>
+    <button class="tab-btn" data-t="bt" onclick="switchTab('bt')">📊 Backtests</button>
+    <button class="tab-btn" data-t="live" onclick="switchTab('live')">🟢 Live Trading</button>
+  </div>
 </nav>
 
 <!-- Paper Trading -->
