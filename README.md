@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://zw-g.github.io/trading-arena-dashboard/">
+  <a href="https://zw-g.github.io/trading-arena-dashboard/" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/🌐_Live_Dashboard-Visit_Now-00c781?style=for-the-badge" alt="Live Dashboard" />
   </a>
 </p>
