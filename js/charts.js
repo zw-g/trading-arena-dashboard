@@ -515,20 +515,20 @@ function renderComparisonTable(keys, strats, spy) {
     <thead><tr>
       <th data-c="n" data-t="s">${T('strategy')}</th>
       <th data-c="ret" data-t="n">${T('total_return')}</th>
-      <th data-c="sh" data-t="n">${T('sharpe')}</th>
+      <th data-c="sh" data-t="n" class="hmob">${T('sharpe')}</th>
       <th data-c="dd" data-t="n">${T('max_dd')}</th>
       <th data-c="wr" data-t="n">${T('win_rate')}</th>
-      <th data-c="hd" data-t="n">${T('avg_hold_days')}</th>
+      <th data-c="hd" data-t="n" class="hmob">${T('avg_hold_days')}</th>
     </tr></thead><tbody>`;
 
   rows.forEach(r => {
     h += `<tr>
       <td style="color:${rc(r.k)};font-weight:600">${esc(r.name)}</td>
       <td class="${cls('ret', r.ret)}" style="font-weight:700">${fp(r.ret)}</td>
-      <td class="${cls('sharpe', r.sharpe)}">${fmt(r.sharpe, 2)}</td>
+      <td class="${cls('sharpe', r.sharpe)} hmob">${fmt(r.sharpe, 2)}</td>
       <td class="${cls('dd', r.dd)}">${r.dd != null ? fmt(r.dd, 1) + '%' : '—'}</td>
       <td class="${cls('wr', r.wr)}">${r.wr != null ? fmt(r.wr, 1) + '%' : '—'}</td>
-      <td>${r.hold != null ? fmt(r.hold, 1) + 'd' : '—'}</td>
+      <td class="hmob">${r.hold != null ? fmt(r.hold, 1) + 'd' : '—'}</td>
     </tr>`;
   });
 
@@ -537,7 +537,7 @@ function renderComparisonTable(keys, strats, spy) {
     h += `<tr style="opacity:.7;font-style:italic">
       <td style="color:var(--c-spy);font-weight:600">SPY</td>
       <td style="font-weight:700">${fp(spy)}</td>
-      <td>—</td><td>—</td><td>—</td><td>—</td>
+      <td class="hmob">—</td><td>—</td><td>—</td><td class="hmob">—</td>
     </tr>`;
   }
 

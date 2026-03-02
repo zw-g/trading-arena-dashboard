@@ -43,11 +43,14 @@
   .tabs-nav { display: none; }
   .mob-nav { display: flex; }
 
+  /* ── Body padding for bottom nav clearance ── */
+  body { padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px); }
+
   /* ── Pane padding (account for bottom nav) ── */
-  .pane { padding: 16px 16px calc(56px + env(safe-area-inset-bottom, 0px) + 16px); }
+  .pane { padding: 16px 16px 16px; }
 
   /* ── Footer spacing for bottom nav ── */
-  .ft { margin-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+  .ft { margin-bottom: 0; }
 
   /* ── Strategy cards → horizontal carousel ── */
   .sg {
@@ -70,16 +73,39 @@
   .carousel-dots { display: flex; }
 
   /* ── Cards ── */
-  .sc { padding: 14px 14px; }
+  .sc { padding: 16px; }
   .sc-nav { font-size: 1.4rem; }
+  .sc-metrics {
+    font-size: .66rem; gap: 2px; flex-wrap: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .sc-sub {
+    font-size: .66rem; gap: 2px; flex-wrap: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
 
   /* ── Scoreboard ── */
-  .scoreboard { height: 44px; }
-  .scoreboard-track { padding: 0 16px; }
+  .scoreboard { height: 40px; }
+  .scoreboard-track {
+    padding: 0 12px; gap: 6px;
+    mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+  }
+  .sb-item { font-size: .74rem; gap: 3px; }
+  .sb-rank { font-size: .62rem; min-width: 14px; }
+  .sb-medal { font-size: .78rem; }
+  .sb-name { font-size: .72rem; }
+  .sb-ret { font-size: .74rem; }
+  .sb-sep { margin: 0 2px; font-size: .8rem; }
 
   /* ── Boxes ── */
-  .box { padding: 14px; margin-bottom: 16px; }
+  .box { padding: 16px; margin-bottom: 16px; }
   .box canvas { max-height: 240px; }
+
+  /* ── Section spacing ── */
+  .sg { margin-bottom: 16px; }
+  .twocol { gap: 16px; margin-bottom: 16px; }
+  .stitle { margin-bottom: 10px; font-size: .8rem; }
 
   /* ── Selectors ── */
   .sel select { min-width: 0; width: 100%; }
@@ -162,10 +188,12 @@
   .sg > .sc.spy { flex: 0 0 88vw; max-width: 88vw; }
   .sg { scroll-padding: 0 6vw; padding: 0 6vw 4px; }
 
-  .sc-sub span::after { display: none; }
-  .sc-sub { flex-direction: column; gap: 1px; }
-  .sc-metrics span::after { display: none; }
-  .sc-metrics { flex-direction: column; gap: 1px; }
+  .sc-sub span::after { content: '·'; margin-left: 3px; }
+  .sc-sub span:last-child::after { content: ''; }
+  .sc-sub { flex-direction: row; gap: 2px; font-size: .62rem; }
+  .sc-metrics span::after { content: '·'; margin-left: 3px; }
+  .sc-metrics span:last-child::after { content: ''; }
+  .sc-metrics { flex-direction: row; gap: 2px; font-size: .62rem; }
 
   .tab-btn { padding: 5px 10px; font-size: .76rem; }
 

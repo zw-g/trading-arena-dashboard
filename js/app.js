@@ -140,20 +140,20 @@ function renderBt() {
       <th data-c="nav" data-t="n">${T('final_nav')}</th>
       <th data-c="ret" data-t="n">${T('return_col')}</th>
       <th data-c="ann" data-t="n" class="hmob">${T('annual')}</th>
-      <th data-c="sh" data-t="n">${T('sharpe')}</th>
+      <th data-c="sh" data-t="n" class="hmob">${T('sharpe')}</th>
       <th data-c="dd" data-t="n">${T('max_dd')}</th>
       <th data-c="wr" data-t="n" class="hmob">${T('win_rate')}</th>
-      <th data-c="m" data-t="s">${T('mode')}</th>
+      <th data-c="m" data-t="s" class="hmob">${T('mode')}</th>
     </tr></thead><tbody>${ranked.map((r, i) => `<tr>
       <td>${MEDALS[i] || i + 1}</td>
       <td style="color:${rc(r.k)};font-weight:600">${esc(r.name)}</td>
       <td style="font-weight:700">${r.nav ? '$' + r.nav.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : '—'}</td>
       <td class="${pc(r.ret)}" style="font-weight:700">${fp(r.ret)}</td>
       <td class="${pc(r.ann)} hmob">${fp(r.ann)}</td>
-      <td>${fmt(r.sharpe, 2)}</td>
+      <td class="hmob">${fmt(r.sharpe, 2)}</td>
       <td class="${pc(r.dd)}">${fmt(r.dd, 1)}%</td>
       <td class="hmob">${fmt(r.wr, 1)}%</td>
-      <td>${modeBadge(r.mode, r.llm)}</td>
+      <td class="hmob">${modeBadge(r.mode, r.llm)}</td>
     </tr>`).join('')}</tbody></table></div>`;
 
   /* ── Strategy cards ── */

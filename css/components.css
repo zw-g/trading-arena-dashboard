@@ -18,7 +18,9 @@
   width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
   background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center;
   font-size: 1rem; transition: all var(--dur) var(--ease); flex-shrink: 0;
+  color: var(--text-sec); overflow: visible; line-height: 1;
 }
+.theme-btn svg { display: block; }
 .theme-btn:hover { border-color: var(--brand); background: var(--brand-bg); transform: scale(1.08); }
 .theme-btn:active { transform: scale(.92); }
 
@@ -603,13 +605,13 @@ tbody tr:hover { background: var(--brand-bg); }
   padding: 10px 0 4px;
 }
 .carousel-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--border); border: none; padding: 0; cursor: pointer;
-  transition: all var(--dur) var(--ease);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-dim); border: none; padding: 0; cursor: pointer;
+  transition: all 0.3s var(--ease);
   -webkit-tap-highlight-color: transparent;
 }
 .carousel-dot.on {
-  width: 18px; border-radius: 3px;
+  width: 24px; height: 8px; border-radius: 4px;
   background: var(--brand);
 }
 
