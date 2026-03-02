@@ -111,6 +111,14 @@ function switchTab(t) {
   updateScoreboard();
   /* Render deferred charts for newly visible tab */
   flushDeferredCharts(t);
+  /* Resize any charts that were created while tab was hidden (canvas width=0) */
+  requestAnimationFrame(() => {
+    const pane = document.getElementById('p-' + t);
+    if (pane) pane.querySelectorAll('canvas').forEach(c => {
+      const chart = Chart.getChart(c);
+      if (chart) chart.resize();
+    });
+  });
 }
 
 /* ═══════════════════════════════════════════════════════
