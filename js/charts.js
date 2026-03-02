@@ -52,10 +52,9 @@ function scheduleCharts(tab, jobs) {
   });
 
   if (tab === currentTab) {
-    jobs.forEach(job => {
-      const el = document.getElementById(job.id);
-      const container = el?.closest('.box') || el?.parentElement;
-      lazyChart(container, tab + '_' + job.id, job.fn);
+    /* Active tab: render immediately (no lazy — elements may be off-screen) */
+    requestAnimationFrame(() => {
+      jobs.forEach(job => { try { job.fn(); } catch(e) { console.warn('Chart render failed:', job.id, e); } });
     });
   } else {
     _deferredCharts[tab] = jobs;
