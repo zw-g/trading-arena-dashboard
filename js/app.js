@@ -42,7 +42,7 @@ function renderPaper() {
 
   /* ── NAV Chart + Sector Doughnut ── */
   h += '<div class="twocol">';
-  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('nav_history')}</div><div style="position:relative;height:340px"><canvas id="pNavC"></canvas></div></div>`;
+  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('nav_history')}</div>${timePillsHTML('pNavTimePills','setPNavTimeRange')}<div style="position:relative;height:340px"><canvas id="pNavC"></canvas></div></div>`;
   h += `<div class="box"><div class="stitle"><span class="i">🥧</span> ${T('sector_dist')}</div><div class="dw"><canvas id="pSecC"></canvas><div class="dc"><div class="n" id="secN">0</div><div class="l">${T('positions_label')}</div></div></div><div class="empty" id="secE" style="display:none"><div class="ei">📦</div>${T('no_positions')}</div></div>`;
   h += '</div>';
 
@@ -182,17 +182,21 @@ function renderBt() {
   /* ── Expandable detail container ── */
   h += '<div class="bt-expand" id="btExpand"><div class="bt-expand-inner" id="btExpandInner"></div></div>';
 
-  /* ── Returns chart ── */
-  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('returns_curve')}</div><div style="position:relative;height:340px"><canvas id="bRetC"></canvas></div></div>`;
+  /* ── Returns chart with time pills ── */
+  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('returns_curve')}</div>${timePillsHTML('btTimePills','setBtTimeRange')}<div style="position:relative;height:340px"><canvas id="bRetC"></canvas></div></div>`;
 
   /* ── Heatmap ── */
   h += `<div class="box"><div class="stitle"><span class="i">🗓️</span> ${T('monthly_heatmap')}</div><div id="bHM"></div></div>`;
+
+  /* ── Comparison Table ── */
+  h += `<div class="box"><div class="stitle"><span class="i">📊</span> ${T('strategy_comparison')}</div><div id="cmpTableWrap"></div></div>`;
 
   out.innerHTML = h;
   updateStaticText();
   updateScoreboard();
   rBRet(keys, strats, run);
   rBHM(keys, strats);
+  renderComparisonTable(keys, strats, spy);
   makeSortable('bSt');
 }
 

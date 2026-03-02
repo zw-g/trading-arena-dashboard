@@ -37,6 +37,8 @@
   .hmg { font-size: .66rem; }
   .hmc { padding: 5px 4px; min-width: 42px; }
   .hml { font-size: .66rem; padding-right: 4px; }
+  .time-pills { gap: 3px; }
+  .pill-btn { padding: 4px 10px; font-size: .7rem; }
 
   /* Panel → bottom sheet */
   .detail-panel {

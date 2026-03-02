@@ -38,6 +38,8 @@ const I18N = {
     live_detail:'The live dashboard will mirror Paper Trading with real-time P&L, positions, and execution logs.',
     live_target:'Target: <strong>Alpaca API</strong> integration with real-time execution.',
     rank:'#',
+    time_1m:'1M', time_3m:'3M', time_6m:'6M', time_1y:'1Y', time_all:'ALL',
+    strategy_comparison:'Strategy Comparison', avg_hold_days:'Avg Hold',
   },
   zh: {
     paper_trading:'模拟交易', backtests:'回测', live_trading:'实盘交易',
@@ -73,6 +75,8 @@ const I18N = {
     live_detail:'实盘仪表盘将镜像模拟交易，提供实时盈亏、持仓和执行日志。',
     live_target:'目标：<strong>Alpaca API</strong> 实时执行。',
     rank:'#',
+    time_1m:'1月', time_3m:'3月', time_6m:'6月', time_1y:'1年', time_all:'全部',
+    strategy_comparison:'策略对比', avg_hold_days:'平均持仓',
   }
 };
 

@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════
    HEATMAP
    ═══════════════════════════════════════════════════════ */
-.hmg { display: grid; gap: 3px; font-size: .73rem; font-weight: 600; }
+.hmg { display: grid; gap: 3px; font-size: .73rem; font-weight: 600; overflow-x: auto; }
 .hmc { padding: 7px 8px; border-radius: 6px; text-align: center; min-width: 58px; transition: transform .12s; }
 .hmc:not(.hmh):not(.hml):hover { transform: scale(1.08); z-index: 1; }
 .hmh { color: var(--text-dim); font-weight: 700; background: transparent; font-size: .68rem; text-transform: uppercase; }
@@ -10,6 +10,23 @@
   display: flex; align-items: flex-start; justify-content: flex-end; gap: 6px; padding-top: 7px;
 }
 .hml .hmd { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════════════
+   TIME RANGE PILLS
+   ═══════════════════════════════════════════════════════ */
+.time-pills {
+  display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.pill-btn {
+  padding: 5px 14px; border: 1px solid var(--border); border-radius: var(--radius-pill);
+  background: var(--card); color: var(--text-sec); font-size: .74rem; font-weight: 600;
+  cursor: pointer; transition: all .15s; letter-spacing: .3px;
+}
+.pill-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-bg); }
+.pill-btn.active {
+  background: var(--brand); color: #fff; border-color: var(--brand);
+  box-shadow: 0 2px 8px rgba(99,102,241,.25);
+}
 
 /* ═══════════════════════════════════════════════════════
    ZOOM CONTROLS

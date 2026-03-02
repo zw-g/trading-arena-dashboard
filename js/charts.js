@@ -5,8 +5,87 @@
 /* ── Computed style helper ── */
 function getCS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
-/* ── Shared chart options ── */
-function chartOpts(unit) {
+/* ═══════════════════════════════════════════════════════
+   LTTB DOWNSAMPLING
+   ═══════════════════════════════════════════════════════ */
+
+/**
+ * Largest-Triangle-Three-Buckets: returns indices to keep.
+ * yValues: array of numbers (nulls treated as 0).
+ * threshold: target number of points.
+ */
+function lttbIndices(yValues, threshold) {
+  const len = yValues.length;
+  if (threshold >= len || threshold <= 2) return Array.from({ length: len }, (_, i) => i);
+  const indices = [0];
+  const bucketSize = (len - 2) / (threshold - 2);
+  let a = 0;
+  for (let i = 0; i < threshold - 2; i++) {
+    const bStart = Math.floor((i + 1) * bucketSize) + 1;
+    const bEnd = Math.min(Math.floor((i + 2) * bucketSize) + 1, len);
+    const nStart = Math.min(Math.floor((i + 2) * bucketSize) + 1, len);
+    const nEnd = Math.min(Math.floor((i + 3) * bucketSize) + 1, len);
+    let avgY = 0, cnt = 0;
+    for (let j = nStart; j < nEnd; j++) { avgY += (yValues[j] ?? 0); cnt++; }
+    avgY = cnt ? avgY / cnt : (yValues[len - 1] ?? 0);
+    const avgX = cnt ? (nStart + nEnd - 1) / 2 : len - 1;
+    let maxArea = -1, maxIdx = bStart;
+    const pAY = yValues[a] ?? 0;
+    for (let j = bStart; j < bEnd; j++) {
+      const area = Math.abs((a - avgX) * ((yValues[j] ?? 0) - pAY) - (a - j) * (avgY - pAY));
+      if (area > maxArea) { maxArea = area; maxIdx = j; }
+    }
+    indices.push(maxIdx);
+    a = maxIdx;
+  }
+  indices.push(len - 1);
+  return indices;
+}
+
+/** Downsample labels + datasets together using LTTB. */
+function downsampleChart(labels, datasets, threshold) {
+  if (!labels.length || labels.length <= threshold) return { labels, datasets };
+  const refDs = datasets.find(d => d.label !== 'SPY' && d.label !== ('$' + (10000 / 1000) + 'K Base')) || datasets[0];
+  const refData = (refDs?.data || []).map(v => v ?? 0);
+  const indices = lttbIndices(refData, threshold);
+  return {
+    labels: indices.map(i => labels[i]),
+    datasets: datasets.map(ds => ({ ...ds, data: indices.map(i => ds.data[i]) }))
+  };
+}
+
+/* ═══════════════════════════════════════════════════════
+   TIME RANGE FILTERING
+   ═══════════════════════════════════════════════════════ */
+
+/** Returns { start, end } indices for a date-label array. */
+function getTimeRangeSlice(labels, range) {
+  if (range === 'ALL' || !labels.length) return { start: 0, end: labels.length };
+  const lastDate = new Date(labels[labels.length - 1] + 'T00:00:00');
+  const startDate = new Date(lastDate);
+  switch (range) {
+    case '1M': startDate.setMonth(startDate.getMonth() - 1); break;
+    case '3M': startDate.setMonth(startDate.getMonth() - 3); break;
+    case '6M': startDate.setMonth(startDate.getMonth() - 6); break;
+    case '1Y': startDate.setFullYear(startDate.getFullYear() - 1); break;
+    default: return { start: 0, end: labels.length };
+  }
+  const startStr = startDate.toISOString().split('T')[0];
+  let startIdx = labels.findIndex(d => d >= startStr);
+  if (startIdx < 0) startIdx = 0;
+  return { start: startIdx, end: labels.length };
+}
+
+/* ── Stored chart data for time-range re-rendering ── */
+let _btRetStore = null;
+let _pNavStore = null;
+
+/* ═══════════════════════════════════════════════════════
+   SHARED CHART OPTIONS
+   ═══════════════════════════════════════════════════════ */
+
+function chartOpts(unit, opts) {
+  const { spyTooltip } = opts || {};
   return {
     responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'nearest', intersect: false },
@@ -20,7 +99,20 @@ function chartOpts(unit) {
         callbacks: {
           label: ctx => {
             const v = ctx.parsed.y;
-            return unit === '$' ? ` ${ctx.dataset.label}: $${v.toLocaleString()}` : ` ${ctx.dataset.label}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
+            const name = ctx.dataset.label;
+            const base = unit === '$'
+              ? ` ${name}: $${v.toLocaleString()}`
+              : ` ${name}: ${v >= 0 ? '+' : ''}${v.toFixed(2)}%`;
+            if (!spyTooltip || name === 'SPY') return base;
+            const spyDs = ctx.chart.data.datasets.find(d => d.label === 'SPY');
+            if (spyDs) {
+              const sv = spyDs.data[ctx.dataIndex];
+              if (sv != null) {
+                const diff = v - sv;
+                return `${base}  (vs SPY: ${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%)`;
+              }
+            }
+            return base;
           }
         }
       },
@@ -100,6 +192,26 @@ function resetChartZoom(key, btn) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   TIME RANGE PILL HANDLERS
+   ═══════════════════════════════════════════════════════ */
+
+function setBtTimeRange(range) {
+  if (!_btRetStore) return;
+  document.querySelectorAll('#btTimePills .pill-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.range === range)
+  );
+  _renderBtRetChart(range);
+}
+
+function setPNavTimeRange(range) {
+  if (!_pNavStore) return;
+  document.querySelectorAll('#pNavTimePills .pill-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.range === range)
+  );
+  _renderPNavChart(range);
+}
+
+/* ═══════════════════════════════════════════════════════
    PAPER TRADING CHARTS
    ═══════════════════════════════════════════════════════ */
 
@@ -118,16 +230,35 @@ function rPNav(keys, strats, cap) {
     return {
       label: displayName(strats[k], k), data: dates.map(d => mp[d] ?? null),
       borderColor: c, _originalColor: c, _originalWidth: 2.5, backgroundColor: c + '18',
-      borderWidth: 2.5, tension: .4, pointRadius: dates.length < 30 ? 3 : 0, pointHoverRadius: 5,
+      borderWidth: 2.5, tension: .3, pointRadius: 0, pointHoverRadius: 5,
       fill: true, spanGaps: true
     };
   });
   dsets.push({
     label: '$' + (cap / 1000) + 'K Base', data: dates.map(() => cap),
     borderColor: '#94a3b8', _originalColor: '#94a3b8', _originalWidth: 1.5,
-    borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false
+    borderDash: [5, 5], borderWidth: 1.5, pointRadius: 0, fill: false
   });
-  CI['pNav'] = new Chart(cv, { type: 'line', data: { labels: dates, datasets: dsets }, options: chartOpts('$'), plugins: [highlightLinePlugin] });
+
+  _pNavStore = { dates, dsets };
+  _renderPNavChart('ALL');
+}
+
+function _renderPNavChart(range) {
+  dc('pNav');
+  const cv = document.getElementById('pNavC'); if (!cv || !_pNavStore) return;
+  const { dates, dsets } = _pNavStore;
+  const { start, end } = getTimeRangeSlice(dates, range);
+  const fDates = dates.slice(start, end);
+  const fDsets = dsets.map(ds => ({ ...ds, data: ds.data.slice(start, end) }));
+  const { labels, datasets } = downsampleChart(fDates, fDsets, 150);
+
+  CI['pNav'] = new Chart(cv, {
+    type: 'line',
+    data: { labels, datasets },
+    options: chartOpts('$'),
+    plugins: [highlightLinePlugin]
+  });
   addZoomControls('pNavC', 'pNav');
 }
 
@@ -180,10 +311,12 @@ function rBRet(keys, strats, run) {
     return {
       label: displayName(strats[k], k), data: dates.map(d => mp[d] != null ? ((mp[d] / iv - 1) * 100) : null),
       borderColor: c, _originalColor: c, _originalWidth: 2.5, backgroundColor: c + (isDk ? '18' : '25'),
-      borderWidth: 2.5, tension: .4, pointRadius: dates.length < 30 ? 3 : 0, pointHoverRadius: 5,
+      borderWidth: 2.5, tension: .3, pointRadius: 0, pointHoverRadius: 5,
       fill: true, spanGaps: true
     };
   });
+
+  /* SPY overlay */
   if (run.spy_return != null) {
     if (run.spy_nav_history?.length) {
       const sm = {}; run.spy_nav_history.forEach(h => sm[h.date] = h.nav);
@@ -191,17 +324,36 @@ function rBRet(keys, strats, run) {
       dsets.push({
         label: 'SPY', data: dates.map(d => sm[d] != null ? ((sm[d] / iv - 1) * 100) : null),
         borderColor: '#94a3b8', _originalColor: '#94a3b8', _originalWidth: 2,
-        borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false, spanGaps: true
+        borderDash: [5, 5], borderWidth: 2, pointRadius: 0, fill: false, spanGaps: true
       });
     } else {
       dsets.push({
         label: 'SPY', data: dates.map((_, i) => dates.length > 1 ? (run.spy_return * i / (dates.length - 1)) : run.spy_return),
         borderColor: '#94a3b8', _originalColor: '#94a3b8', _originalWidth: 2,
-        borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false
+        borderDash: [5, 5], borderWidth: 2, pointRadius: 0, fill: false
       });
     }
   }
-  CI['bRet'] = new Chart(cv, { type: 'line', data: { labels: dates, datasets: dsets }, options: chartOpts('%'), plugins: [highlightLinePlugin] });
+
+  _btRetStore = { dates, dsets, hasSpy: run.spy_return != null };
+  _renderBtRetChart('ALL');
+}
+
+function _renderBtRetChart(range) {
+  dc('bRet');
+  const cv = document.getElementById('bRetC'); if (!cv || !_btRetStore) return;
+  const { dates, dsets, hasSpy } = _btRetStore;
+  const { start, end } = getTimeRangeSlice(dates, range);
+  const fDates = dates.slice(start, end);
+  const fDsets = dsets.map(ds => ({ ...ds, data: ds.data.slice(start, end) }));
+  const { labels, datasets } = downsampleChart(fDates, fDsets, 150);
+
+  CI['bRet'] = new Chart(cv, {
+    type: 'line',
+    data: { labels, datasets },
+    options: chartOpts('%', { spyTooltip: hasSpy }),
+    plugins: [highlightLinePlugin]
+  });
   addZoomControls('bRetC', 'bRet');
 }
 
@@ -213,9 +365,16 @@ function rBHM(keys, strats) {
   const months = [...ms].sort();
   if (!months.length) { el.innerHTML = '<div class="empty">' + T('no_monthly') + '</div>'; return; }
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  let h = `<div class="hmg" style="grid-template-columns:130px repeat(${months.length},1fr)">`;
+
+  /* Build grid with explicit column count for alignment */
+  const cols = months.length;
+  let h = `<div class="hmg" style="grid-template-columns:130px repeat(${cols},1fr)">`;
+
+  /* Header row: empty corner + month labels */
   h += '<div class="hmc hmh"></div>';
   months.forEach(m => h += `<div class="hmc hmh">${m}</div>`);
+
+  /* Data rows */
   keys.forEach(k => {
     const mr = strats[k].monthly_returns || {};
     h += `<div class="hmc hml"><span class="hmd" style="background:${rc(k)}"></span>${esc(displayName(strats[k], k))}</div>`;
@@ -234,6 +393,103 @@ function rBHM(keys, strats) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   COMPARISON TABLE
+   ═══════════════════════════════════════════════════════ */
+
+function renderComparisonTable(keys, strats, spy) {
+  const el = document.getElementById('cmpTableWrap'); if (!el) return;
+
+  /* Gather data & sort by total return desc */
+  const rows = keys.map(k => {
+    const s = strats[k];
+    return {
+      k, name: displayName(s, k),
+      ret: s.total_return ?? null,
+      sharpe: s.sharpe ?? null,
+      dd: s.max_drawdown ?? null,
+      wr: s.win_rate ?? null,
+      hold: s.avg_hold_days ?? null,
+    };
+  }).sort((a, b) => (b.ret || 0) - (a.ret || 0));
+
+  if (!rows.length) { el.innerHTML = ''; return; }
+
+  /* Find best / worst for each metric */
+  const metrics = ['ret', 'sharpe', 'dd', 'wr'];
+  const best = {}, worst = {};
+  metrics.forEach(m => {
+    const vals = rows.map(r => r[m]).filter(v => v != null);
+    if (!vals.length) return;
+    if (m === 'dd') {
+      /* Max DD: closer to 0 = better (less negative) */
+      best[m] = Math.max(...vals);
+      worst[m] = Math.min(...vals);
+    } else {
+      best[m] = Math.max(...vals);
+      worst[m] = Math.min(...vals);
+    }
+  });
+
+  const cls = (m, v) => {
+    if (v == null || best[m] == null) return '';
+    if (v === best[m] && best[m] !== worst[m]) return 'cmp-best';
+    if (v === worst[m] && best[m] !== worst[m]) return 'cmp-worst';
+    return '';
+  };
+
+  let h = `<table class="cmp-table" id="cmpTbl">
+    <thead><tr>
+      <th data-c="n" data-t="s">${T('strategy')}</th>
+      <th data-c="ret" data-t="n">${T('total_return')}</th>
+      <th data-c="sh" data-t="n">${T('sharpe')}</th>
+      <th data-c="dd" data-t="n">${T('max_dd')}</th>
+      <th data-c="wr" data-t="n">${T('win_rate')}</th>
+      <th data-c="hd" data-t="n">${T('avg_hold_days')}</th>
+    </tr></thead><tbody>`;
+
+  rows.forEach(r => {
+    h += `<tr>
+      <td style="color:${rc(r.k)};font-weight:600">${esc(r.name)}</td>
+      <td class="${cls('ret', r.ret)}" style="font-weight:700">${fp(r.ret)}</td>
+      <td class="${cls('sharpe', r.sharpe)}">${fmt(r.sharpe, 2)}</td>
+      <td class="${cls('dd', r.dd)}">${r.dd != null ? fmt(r.dd, 1) + '%' : '—'}</td>
+      <td class="${cls('wr', r.wr)}">${r.wr != null ? fmt(r.wr, 1) + '%' : '—'}</td>
+      <td>${r.hold != null ? fmt(r.hold, 1) + 'd' : '—'}</td>
+    </tr>`;
+  });
+
+  /* SPY row if available */
+  if (spy != null) {
+    h += `<tr style="opacity:.7;font-style:italic">
+      <td style="color:var(--c-spy);font-weight:600">SPY</td>
+      <td style="font-weight:700">${fp(spy)}</td>
+      <td>—</td><td>—</td><td>—</td><td>—</td>
+    </tr>`;
+  }
+
+  h += '</tbody></table>';
+  el.innerHTML = h;
+  makeSortable('cmpTbl');
+}
+
+/* ═══════════════════════════════════════════════════════
+   TIME RANGE PILLS HTML HELPER
+   ═══════════════════════════════════════════════════════ */
+
+function timePillsHTML(id, handler) {
+  const ranges = [
+    { key: '1M', label: T('time_1m') },
+    { key: '3M', label: T('time_3m') },
+    { key: '6M', label: T('time_6m') },
+    { key: '1Y', label: T('time_1y') },
+    { key: 'ALL', label: T('time_all') },
+  ];
+  return `<div class="time-pills" id="${id}">${ranges.map(r =>
+    `<button class="pill-btn${r.key === 'ALL' ? ' active' : ''}" data-range="${r.key}" onclick="${handler}('${r.key}')">${r.label}</button>`
+  ).join('')}</div>`;
+}
+
+/* ═══════════════════════════════════════════════════════
    DETAIL PANEL CHARTS
    ═══════════════════════════════════════════════════════ */
 
@@ -244,7 +500,7 @@ function renderSparkline(navH, color) {
   const dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
   CI['dpSpark'] = new Chart(canvas, {
     type: 'line',
-    data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .4, pointRadius: 0, fill: true }] },
+    data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .3, pointRadius: 0, fill: true }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false }, tooltip: {
@@ -302,7 +558,7 @@ function renderBtDetailSpark(navH, color) {
   const dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
   CI['btDetailSpark'] = new Chart(canvas, {
     type: 'line',
-    data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .4, pointRadius: 0, fill: true }] },
+    data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .3, pointRadius: 0, fill: true }] },
     options: {
       responsive: false,
       plugins: { legend: { display: false }, tooltip: {

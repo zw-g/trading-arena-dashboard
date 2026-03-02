@@ -359,6 +359,22 @@ tbody tr:hover { background: var(--brand-bg); }
 .badge-rules    { background: var(--info-bg); color: var(--info-text); }
 
 /* ═══════════════════════════════════════════════════════
+   COMPARISON TABLE
+   ═══════════════════════════════════════════════════════ */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.cmp-table thead th { cursor: pointer; user-select: none; }
+.cmp-table td { text-align: center; }
+.cmp-table td:first-child { text-align: left; }
+.cmp-best {
+  background: var(--green-bg) !important; color: var(--green) !important;
+  font-weight: 700 !important; border-radius: 4px;
+}
+.cmp-worst {
+  background: var(--red-bg) !important; color: var(--red) !important;
+  font-weight: 700 !important; border-radius: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════
    COMING SOON
    ═══════════════════════════════════════════════════════ */
 .cs-page {
