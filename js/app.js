@@ -87,6 +87,7 @@ function renderPaper() {
   rPNav(keys, strats, cap);
   rPSec(keys, strats);
   makeSortable('pLb');
+  refreshCarouselDots();
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -191,6 +192,16 @@ function renderBt() {
   /* ── Comparison Table ── */
   h += `<div class="box"><div class="stitle"><span class="i">📊</span> ${T('strategy_comparison')}</div><div id="cmpTableWrap"></div></div>`;
 
+  /* ── T24: All Trades (cross-strategy) ── */
+  let allCompleted = [];
+  keys.forEach(k => {
+    const ct = strats[k].completed_trades || [];
+    ct.forEach(t => allCompleted.push({ ...t, strategy: t.strategy || k }));
+  });
+  if (allCompleted.length) {
+    h += `<div class="box"><div class="stitle"><span class="i">📋</span> ${T('all_trades')} (${allCompleted.length})</div><div id="btAllTrades" class="tl-wrap"></div></div>`;
+  }
+
   out.innerHTML = h;
   updateStaticText();
   updateScoreboard();
@@ -198,6 +209,15 @@ function renderBt() {
   rBHM(keys, strats);
   renderComparisonTable(keys, strats, spy);
   makeSortable('bSt');
+  refreshCarouselDots();
+
+  /* T24: Build all-trades virtual list */
+  if (allCompleted.length) {
+    buildTradeList('btAllTrades', allCompleted, {
+      showStrategy: true,
+      stratColor: k => rc(k),
+    });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -341,6 +361,12 @@ function toggleBtDetail(key) {
     h += `<div style="margin-top:20px"><div class="dp-label">📈 ${T('nav_hist')}</div><div class="dp-spark"><canvas id="btDetailSpark" height="120"></canvas></div></div>`;
   }
 
+  /* T24: Per-strategy completed trades */
+  const stratTrades = sd.completed_trades || [];
+  if (stratTrades.length) {
+    h += `<div style="margin-top:20px"><div class="dp-label">📋 ${T('trade_list')} (${stratTrades.length})</div><div id="btStratTrades-${key}" class="tl-wrap"></div></div>`;
+  }
+
   inner.innerHTML = h;
   dc('btMonthly'); dc('btDetailSpark');
 
@@ -353,6 +379,13 @@ function toggleBtDetail(key) {
   const renderCharts = () => {
     if (mrKeys.length) renderBtMonthly(mrKeys, mr, c);
     if (navH.length > 1) renderBtDetailSpark(navH, c);
+    /* T24: Build per-strategy trade list */
+    if (stratTrades.length) {
+      buildTradeList('btStratTrades-' + key, stratTrades, {
+        showStrategy: false,
+        stratColor: k => rc(k),
+      });
+    }
     requestAnimationFrame(() => { expand.style.maxHeight = inner.scrollHeight + 48 + 'px'; });
   };
   let rendered = false;
@@ -390,6 +423,13 @@ function toggleBtDetail(key) {
   /* Listen for system theme changes */
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
     if (!localStorage.getItem('theme')) setTheme(e.matches ? 'dark' : 'light');
+  });
+
+  /* Re-init carousel dots on resize/orientation change */
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(refreshCarouselDots, 200);
   });
 
   /* Smart refresh */

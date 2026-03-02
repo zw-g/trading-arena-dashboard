@@ -40,6 +40,14 @@ function updateStaticText() {
     else if (t === 'bt') b.textContent = '📊 ' + T('backtests');
     else if (t === 'live') b.textContent = '🟢 ' + T('live_trading');
   });
+  /* Mobile bottom nav labels */
+  document.querySelectorAll('.mob-nav-btn').forEach(b => {
+    const t = b.dataset.t, lbl = b.querySelector('.mob-nav-lbl');
+    if (!lbl) return;
+    if (t === 'paper') lbl.textContent = T('paper_trading');
+    else if (t === 'bt') lbl.textContent = T('backtests');
+    else if (t === 'live') lbl.textContent = T('live_trading');
+  });
   /* Selector labels */
   const lblS = document.querySelector('label[for="sSel"]');
   if (lblS) lblS.textContent = T('session');
@@ -95,6 +103,8 @@ function switchTab(t) {
     p.classList.remove('on');
     if (isTarget) { void p.offsetWidth; p.classList.add('on'); }
   });
+  /* Sync mobile bottom nav */
+  document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.toggle('on', b.dataset.t === t));
   updateStaticText();
   updateScoreboard();
 }
@@ -402,6 +412,12 @@ function openPanel(stratData, key, source) {
     }
   }
 
+  /* ── T24: Completed trades list (if available) ── */
+  const completedTrades = stratData?.completed_trades || [];
+  if (completedTrades.length) {
+    html += `<div class="dp-section"><div class="dp-label">📋 ${T('trade_list')} (${completedTrades.length})</div><div id="panelTradeList" class="tl-wrap"></div></div>`;
+  }
+
   /* ── 10. Trade timeline (Level 2, each clickable for Level 3) ── */
   const trades = (stratData?.trades || []).slice(-20).reverse();
   if (trades.length > 0) {
@@ -447,6 +463,10 @@ function openPanel(stratData, key, source) {
       renderSparkline(navH, c);
     }
     if (mrKeys.length) renderPanelMonthlyChart(mr);
+    /* T24: Init completed trades list in panel */
+    if (completedTrades.length) {
+      buildTradeList('panelTradeList', completedTrades, { showStrategy: false });
+    }
   }, 50);
 }
 
@@ -460,6 +480,297 @@ function closePanel() {
 }
 
 function toggleTrade(el) { el.classList.toggle('expanded'); }
+
+/* ═══════════════════════════════════════════════════════
+   T24: TRADE LIST WITH VIRTUAL SCROLLING
+   ═══════════════════════════════════════════════════════ */
+
+/** Global state for virtual scroll instances. */
+const _tlState = {};
+const TL_ROW_H = 36;
+const TL_DETAIL_H = 180;
+
+/**
+ * Build a trade list component inside the given container.
+ * @param {string} id       – unique id for this trade list instance
+ * @param {Array}  trades   – array of completed_trade objects
+ * @param {Object} opts     – { showStrategy: bool, stratColor: fn(stratKey)->color }
+ */
+function buildTradeList(id, trades, opts) {
+  const wrap = document.getElementById(id);
+  if (!wrap) return;
+  const showStrat = opts?.showStrategy || false;
+
+  const state = {
+    all: trades,
+    filtered: trades,
+    sortKey: 'pnl_pct',
+    sortAsc: false,
+    filter: '',
+    expanded: null,
+    showStrat,
+    opts: opts || {},
+  };
+  _tlState[id] = state;
+
+  /* Build the DOM structure */
+  const hCls = showStrat ? 'tl-header tl-header-all' : 'tl-header';
+  let html = '';
+
+  /* Toolbar */
+  html += `<div class="tl-toolbar">
+    <input class="tl-search" type="text" placeholder="${T('search_ticker')}"
+      oninput="_tlFilter('${id}',this.value)">
+    <span class="tl-stats" id="${id}-stats"></span>
+  </div>`;
+
+  /* Header */
+  html += `<div class="${hCls}" id="${id}-hdr">`;
+  const cols = _tlCols(showStrat);
+  cols.forEach(c => {
+    const active = c.key === state.sortKey;
+    const cls = active ? (state.sortAsc ? 'tl-th tl-sa' : 'tl-th tl-sd') : 'tl-th';
+    html += `<div class="${cls}" data-k="${c.key}" onclick="_tlSort('${id}','${c.key}')">${c.label}</div>`;
+  });
+  html += `</div>`;
+
+  /* Viewport */
+  html += `<div class="tl-viewport" id="${id}-vp">
+    <div class="tl-viewport-inner" id="${id}-inner"></div>
+  </div>`;
+
+  wrap.innerHTML = html;
+
+  /* Attach scroll listener */
+  const vp = document.getElementById(id + '-vp');
+  if (vp) {
+    let ticking = false;
+    vp.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(() => { _tlRender(id); ticking = false; }); }
+    });
+  }
+
+  /* Initial sort + render */
+  _tlApply(id);
+}
+
+function _tlCols(showStrat) {
+  const cols = [
+    { key: 'ticker', label: T('ticker') },
+  ];
+  if (showStrat) cols.push({ key: 'strategy', label: T('strategy_col') });
+  cols.push(
+    { key: 'direction', label: T('direction') },
+    { key: 'entry_date', label: T('entry_date') },
+    { key: 'exit_date', label: T('exit_date') },
+    { key: 'entry_price', label: T('entry_price_col') },
+    { key: 'exit_price', label: T('exit_price_col') },
+    { key: 'pnl', label: T('pnl_dollar') },
+    { key: 'pnl_pct', label: T('pnl_pct_col') },
+    { key: 'hold_days', label: T('hold_days_col') },
+    { key: 'exit_type', label: T('exit_type_col') },
+  );
+  return cols;
+}
+
+function _tlFilter(id, text) {
+  const s = _tlState[id]; if (!s) return;
+  s.filter = text.toLowerCase();
+  s.expanded = null;
+  _tlApply(id);
+}
+
+function _tlSort(id, key) {
+  const s = _tlState[id]; if (!s) return;
+  if (s.sortKey === key) { s.sortAsc = !s.sortAsc; }
+  else { s.sortKey = key; s.sortAsc = false; }
+  s.expanded = null;
+
+  /* Update header indicators */
+  const hdr = document.getElementById(id + '-hdr');
+  if (hdr) {
+    hdr.querySelectorAll('.tl-th').forEach(th => {
+      th.classList.remove('tl-sa', 'tl-sd');
+      if (th.dataset.k === key) th.classList.add(s.sortAsc ? 'tl-sa' : 'tl-sd');
+    });
+  }
+  _tlApply(id);
+}
+
+function _tlApply(id) {
+  const s = _tlState[id]; if (!s) return;
+
+  /* Filter */
+  let rows = s.all;
+  if (s.filter) {
+    rows = rows.filter(r => (r.ticker || '').toLowerCase().includes(s.filter));
+  }
+
+  /* Sort */
+  const sk = s.sortKey, asc = s.sortAsc;
+  rows = [...rows].sort((a, b) => {
+    let va = a[sk], vb = b[sk];
+    if (va == null) va = '';
+    if (vb == null) vb = '';
+    if (typeof va === 'string') { va = va.toLowerCase(); vb = (vb + '').toLowerCase(); }
+    if (va < vb) return asc ? -1 : 1;
+    if (va > vb) return asc ? 1 : -1;
+    return 0;
+  });
+
+  s.filtered = rows;
+
+  /* Update stats */
+  const statsEl = document.getElementById(id + '-stats');
+  if (statsEl) {
+    statsEl.textContent = T('showing_trades')
+      .replace('{n}', rows.length)
+      .replace('{total}', s.all.length);
+  }
+
+  _tlRender(id);
+}
+
+function _tlToggle(id, idx) {
+  const s = _tlState[id]; if (!s) return;
+  s.expanded = s.expanded === idx ? null : idx;
+  _tlRender(id);
+}
+
+function _tlRowTop(idx, expanded) {
+  if (expanded == null || idx <= expanded) return idx * TL_ROW_H;
+  return idx * TL_ROW_H + TL_DETAIL_H;
+}
+
+function _tlRender(id) {
+  const s = _tlState[id]; if (!s) return;
+  const vp = document.getElementById(id + '-vp');
+  const inner = document.getElementById(id + '-inner');
+  if (!vp || !inner) return;
+
+  const N = s.filtered.length;
+  const exp = s.expanded;
+  const totalH = N * TL_ROW_H + (exp != null ? TL_DETAIL_H : 0);
+  inner.style.height = totalH + 'px';
+
+  if (!N) {
+    inner.innerHTML = `<div class="tl-empty"><div class="tl-empty-icon">📭</div><div class="tl-empty-text">${T('no_completed_trades')}</div></div>`;
+    return;
+  }
+
+  const scrollTop = vp.scrollTop;
+  const viewH = vp.clientHeight;
+  const buffer = 5;
+
+  /* Find visible range */
+  let startIdx, endIdx;
+  if (exp == null) {
+    startIdx = Math.max(0, Math.floor(scrollTop / TL_ROW_H) - buffer);
+    endIdx = Math.min(N, Math.ceil((scrollTop + viewH) / TL_ROW_H) + buffer);
+  } else {
+    /* Account for the expanded detail gap */
+    const detailTop = (exp + 1) * TL_ROW_H;
+    const detailBot = detailTop + TL_DETAIL_H;
+    if (scrollTop + viewH < detailTop) {
+      /* All visible rows are before the detail */
+      startIdx = Math.max(0, Math.floor(scrollTop / TL_ROW_H) - buffer);
+      endIdx = Math.min(N, Math.ceil((scrollTop + viewH) / TL_ROW_H) + buffer);
+    } else if (scrollTop > detailBot) {
+      /* All visible rows are after the detail */
+      startIdx = Math.max(0, Math.floor((scrollTop - TL_DETAIL_H) / TL_ROW_H) - buffer);
+      endIdx = Math.min(N, Math.ceil((scrollTop + viewH - TL_DETAIL_H) / TL_ROW_H) + buffer);
+    } else {
+      /* Detail is in view — render around it */
+      startIdx = Math.max(0, Math.floor(scrollTop / TL_ROW_H) - buffer);
+      endIdx = Math.min(N, Math.ceil((scrollTop + viewH - TL_DETAIL_H) / TL_ROW_H) + buffer + 2);
+    }
+  }
+
+  let html = '';
+  for (let i = startIdx; i < endIdx; i++) {
+    const row = s.filtered[i];
+    const top = _tlRowTop(i, exp);
+    const isExp = i === exp;
+    const pnlCls = (row.pnl_pct || 0) >= 0 ? 'pos' : 'neg';
+    const rowCls = 'tl-row' + (s.showStrat ? ' tl-row-all' : '') + (isExp ? ' tl-row-expanded' : '');
+
+    html += `<div class="${rowCls}" style="top:${top}px;height:${TL_ROW_H}px" onclick="_tlToggle('${id}',${i})">`;
+    html += `<div class="tl-td tl-td-ticker">${esc(row.ticker || '—')}</div>`;
+    if (s.showStrat) {
+      const sc = s.opts.stratColor ? s.opts.stratColor(row.strategy) : 'var(--text-dim)';
+      html += `<div class="tl-td"><span class="tl-strat-badge" style="color:${sc}">${esc(displayName(null, row.strategy || ''))}</span></div>`;
+    }
+    html += `<div class="tl-td tl-td-dir ${(row.direction || 'long').toLowerCase()}">${(row.direction || 'long') === 'long' ? T('long_dir') : T('short_dir')}</div>`;
+    html += `<div class="tl-td">${row.entry_date || '—'}</div>`;
+    html += `<div class="tl-td">${row.exit_date || '—'}</div>`;
+    html += `<div class="tl-td">$${fmt(row.entry_price, 2)}</div>`;
+    html += `<div class="tl-td">$${fmt(row.exit_price, 2)}</div>`;
+    html += `<div class="tl-td tl-td-pnl ${pnlCls}">${row.pnl != null ? ((row.pnl >= 0 ? '+' : '') + '$' + fmt(Math.abs(row.pnl), 2)) : '—'}</div>`;
+    html += `<div class="tl-td tl-td-pnl ${pnlCls}">${row.pnl_pct != null ? ((row.pnl_pct >= 0 ? '+' : '') + fmt(row.pnl_pct, 2) + '%') : '—'}</div>`;
+    html += `<div class="tl-td">${row.hold_days != null ? row.hold_days + 'd' : '—'}</div>`;
+    html += `<div class="tl-td">${_tlExitBadge(row.exit_type)}</div>`;
+    html += `</div>`;
+
+    if (isExp) {
+      const detTop = top + TL_ROW_H;
+      html += `<div class="tl-detail" style="top:${detTop}px;height:${TL_DETAIL_H}px">`;
+      html += _tlDetailHTML(row, s);
+      html += `</div>`;
+    }
+  }
+
+  inner.innerHTML = html;
+}
+
+function _tlExitBadge(exitType) {
+  if (!exitType) return '<span class="tl-td-exit other">—</span>';
+  const et = exitType.toLowerCase();
+  if (et.includes('stop_loss') || et === 'sl') return `<span class="tl-td-exit sl">${T('exit_stop_loss')}</span>`;
+  if (et.includes('take_profit') || et === 'tp') return `<span class="tl-td-exit tp">${T('exit_take_profit')}</span>`;
+  if (et.includes('signal')) return `<span class="tl-td-exit sig">${et.includes('reversal') ? T('exit_signal_reversal') : T('exit_signal_sell')}</span>`;
+  return `<span class="tl-td-exit other">${esc(exitType.replace(/_/g, ' '))}</span>`;
+}
+
+function _tlDetailHTML(row, state) {
+  let h = '<div class="tl-detail-grid">';
+
+  h += _tlDetailItem(T('ticker'), row.ticker || '—');
+  h += _tlDetailItem(T('direction'), row.direction === 'short' ? '🔴 ' + T('short_dir') : '🟢 ' + T('long_dir'));
+  h += _tlDetailItem(T('entry_date'), row.entry_date || '—');
+  h += _tlDetailItem(T('exit_date'), row.exit_date || '—');
+  h += _tlDetailItem(T('entry_price_col'), '$' + fmt(row.entry_price, 2));
+  h += _tlDetailItem(T('exit_price_col'), '$' + fmt(row.exit_price, 2));
+
+  const pnlCls = (row.pnl || 0) >= 0 ? 'pos' : 'neg';
+  h += `<div class="tl-detail-item"><div class="tl-detail-label">${T('pnl_dollar')}</div><div class="tl-detail-value ${pnlCls}">${row.pnl != null ? ((row.pnl >= 0 ? '+' : '') + '$' + fmt(Math.abs(row.pnl), 2)) : '—'}</div></div>`;
+  h += `<div class="tl-detail-item"><div class="tl-detail-label">${T('pnl_pct_col')}</div><div class="tl-detail-value ${pnlCls}">${row.pnl_pct != null ? ((row.pnl_pct >= 0 ? '+' : '') + fmt(row.pnl_pct, 2) + '%') : '—'}</div></div>`;
+
+  h += _tlDetailItem(T('hold_days_col'), row.hold_days != null ? row.hold_days + ' days' : '—');
+  h += _tlDetailItem(T('exit_type_col'), _tlExitBadge(row.exit_type));
+
+  if (row.shares != null) h += _tlDetailItem(T('shares'), row.shares);
+  if (state.showStrat && row.strategy) {
+    const sc = state.opts.stratColor ? state.opts.stratColor(row.strategy) : 'var(--text)';
+    h += `<div class="tl-detail-item"><div class="tl-detail-label">${T('strategy_col')}</div><div class="tl-detail-value" style="color:${sc}">${esc(displayName(null, row.strategy))}</div></div>`;
+  }
+  if (row.signal_confidence != null) {
+    h += _tlDetailItem(T('confidence_col'), (row.signal_confidence * 100).toFixed(0) + '%');
+  }
+
+  h += '</div>';
+  return h;
+}
+
+function _tlDetailItem(label, value) {
+  return `<div class="tl-detail-item"><div class="tl-detail-label">${label}</div><div class="tl-detail-value">${value}</div></div>`;
+}
+
+/** Destroy a trade list instance and clean up. */
+function destroyTradeList(id) {
+  delete _tlState[id];
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = '';
+}
 
 /* ═══════════════════════════════════════════════════════
    CARD CLICK & TOOLTIP DELEGATORS
@@ -508,4 +819,57 @@ function makeAddedBadge(meta, sessionStart) {
   const locale = LANG === 'zh' ? 'zh-CN' : 'en-US';
   const label = d.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
   return `<span class="badge badge-new">${T('added')} ${label}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CAROUSEL DOT INDICATORS (Mobile)
+   ═══════════════════════════════════════════════════════ */
+function initCarouselDots(sgEl) {
+  if (!sgEl) return;
+  /* Remove any existing dots container */
+  const prev = sgEl.parentNode.querySelector('.carousel-dots');
+  if (prev) prev.remove();
+
+  const cards = sgEl.querySelectorAll('.sc');
+  if (cards.length < 2) return;
+
+  const dotsWrap = document.createElement('div');
+  dotsWrap.className = 'carousel-dots';
+  cards.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' on' : '');
+    dot.setAttribute('aria-label', 'Card ' + (i + 1));
+    dot.addEventListener('click', () => {
+      cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    });
+    dotsWrap.appendChild(dot);
+  });
+  sgEl.after(dotsWrap);
+
+  /* Scroll observer to update active dot */
+  let ticking = false;
+  sgEl.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollLeft = sgEl.scrollLeft;
+      const sgRect = sgEl.getBoundingClientRect();
+      const center = sgRect.left + sgRect.width / 2;
+      let closest = 0, minDist = Infinity;
+      cards.forEach((c, i) => {
+        const r = c.getBoundingClientRect();
+        const cardCenter = r.left + r.width / 2;
+        const dist = Math.abs(cardCenter - center);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('on', i === closest));
+      ticking = false;
+    });
+  }, { passive: true });
+}
+
+/* Call after renderPaper / renderBt injects .sg */
+function refreshCarouselDots() {
+  if (window.innerWidth > 768) return;
+  document.querySelectorAll('.pane.on .sg').forEach(initCarouselDots);
 }

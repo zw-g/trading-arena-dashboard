@@ -90,6 +90,25 @@
 <!-- Footer -->
 <footer class="ft" id="ftText">Trading Arena · Auto-updated every 120 s</footer>
 
+<!-- Mobile Bottom Navigation (visible < 768px) -->
+<nav class="mob-nav" id="mobNav">
+  <button class="mob-nav-btn on" data-t="paper" onclick="switchTab('paper')">
+    <span class="mob-nav-ico">📊</span>
+    <span class="mob-nav-lbl">Paper</span>
+    <span class="mob-nav-dot"></span>
+  </button>
+  <button class="mob-nav-btn" data-t="bt" onclick="switchTab('bt')">
+    <span class="mob-nav-ico">📈</span>
+    <span class="mob-nav-lbl">Backtest</span>
+    <span class="mob-nav-dot"></span>
+  </button>
+  <button class="mob-nav-btn" data-t="live" onclick="switchTab('live')">
+    <span class="mob-nav-ico">🟢</span>
+    <span class="mob-nav-lbl">Live</span>
+    <span class="mob-nav-dot"></span>
+  </button>
+</nav>
+
 <!-- Application scripts (order matters: config → data → charts → ui → app) -->
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>

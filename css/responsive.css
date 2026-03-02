@@ -1,5 +1,23 @@
 /* ═══════════════════════════════════════════════════════
-   RESPONSIVE — Tablet
+   RESPONSIVE BREAKPOINTS
+   ─────────────────────────────────────────────────────
+   >1440px  : Large desktop (default)
+   1024-1440 : Small desktop
+   768-1024  : Tablet
+   480-768   : Phone landscape / small tablet
+   <480px    : Phone portrait
+   ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   BREAKPOINT 4 — Small Desktop (≤ 1440px)
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 1440px) {
+  .sg { gap: 12px; }
+  .pane { padding: 20px 20px 48px; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BREAKPOINT 3 — Tablet (≤ 1024px)
    ═══════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .sg { grid-template-columns: repeat(2, 1fr); }
@@ -11,36 +29,78 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   RESPONSIVE — Mobile
+   BREAKPOINT 2 — Phone landscape / Small tablet (≤ 768px)
    ═══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   html { font-size: 15px; }
+
+  /* ── Header ── */
   .hdr { padding: 12px 16px; gap: 10px; }
   .hdr-logo .txt { font-size: 1rem; }
   .hdr .upd { display: none; }
-  .tabs-nav { padding: 8px 16px; gap: 4px; }
-  .tab-btn { padding: 6px 12px; font-size: .8rem; }
-  .pane { padding: 16px 16px 40px; }
-  .sg { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ── Hide desktop tabs, show mobile bottom nav ── */
+  .tabs-nav { display: none; }
+  .mob-nav { display: flex; }
+
+  /* ── Pane padding (account for bottom nav) ── */
+  .pane { padding: 16px 16px calc(56px + env(safe-area-inset-bottom, 0px) + 16px); }
+
+  /* ── Footer spacing for bottom nav ── */
+  .ft { margin-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+
+  /* ── Strategy cards → horizontal carousel ── */
+  .sg {
+    display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory; scroll-padding: 0 7.5vw;
+    gap: 12px; padding: 0 7.5vw 4px; margin: 0 -16px 12px;
+    scrollbar-width: none;
+  }
+  .sg::-webkit-scrollbar { display: none; }
+  .sg > .sc {
+    flex: 0 0 85vw; max-width: 85vw;
+    scroll-snap-align: center;
+  }
+  .sg > .sc.spy {
+    flex: 0 0 85vw; max-width: 85vw;
+    scroll-snap-align: center;
+  }
+
+  /* ── Show carousel dot indicators ── */
+  .carousel-dots { display: flex; }
+
+  /* ── Cards ── */
   .sc { padding: 14px 14px; }
   .sc-nav { font-size: 1.4rem; }
+
+  /* ── Scoreboard ── */
   .scoreboard { height: 44px; }
   .scoreboard-track { padding: 0 16px; }
-  .tabs-nav { padding: 8px 16px; }
-  .tabs-toggle { padding: 3px; }
+
+  /* ── Boxes ── */
   .box { padding: 14px; margin-bottom: 16px; }
   .box canvas { max-height: 240px; }
+
+  /* ── Selectors ── */
   .sel select { min-width: 0; width: 100%; }
   .sel { flex-direction: column; align-items: stretch; gap: 6px; }
+
+  /* ── Two-column → single ── */
   .twocol { grid-template-columns: 1fr; gap: 16px; }
+
+  /* ── Hide on mobile ── */
   .hmob { display: none; }
+
+  /* ── Heatmap (compact) ── */
   .hmg { font-size: .66rem; }
   .hmc { padding: 5px 4px; min-width: 42px; }
   .hml { font-size: .66rem; padding-right: 4px; }
+
+  /* ── Time pills ── */
   .time-pills { gap: 3px; }
   .pill-btn { padding: 4px 10px; font-size: .7rem; }
 
-  /* Panel → fullscreen overlay */
+  /* ── Detail panel → fullscreen overlay ── */
   .detail-panel {
     top: 0; right: 0; bottom: 0; left: 0; width: 100%; max-width: 100%;
     min-width: 0; max-height: 100vh; border-radius: 0;
@@ -53,28 +113,60 @@
   .dp-chart { height: 160px; }
   .dp-head { padding: 14px 16px; }
   .dp-body { padding: 16px; }
+
+  /* ── Backtest expand ── */
   .bt-top-trades { grid-template-columns: 1fr; }
   .bt-metrics { grid-template-columns: repeat(3, 1fr); }
   .bt-expand-inner { padding: 16px; }
   .bt-header { padding: 12px 14px; gap: 8px; }
+
+  /* ── Touch: tables horizontal scroll ── */
+  .box table { display: block; }
+  .box thead, .box tbody, .box tr { display: table; width: 100%; table-layout: auto; }
+  .box > div:has(> table),
+  .box > table,
+  #cmpTableWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ── Touch: chart pan ── */
+  .box canvas,
+  .dp-chart canvas,
+  .dp-spark canvas { touch-action: pan-y; }
+
+  /* ── Touch: minimum 44px touch targets ── */
+  .tab-btn, .theme-btn, .lang-btn, .dp-close,
+  .pill-btn, .tt-card, .ti, button { min-height: 44px; }
 }
 
 /* ═══════════════════════════════════════════════════════
-   RESPONSIVE — Small phone
+   BREAKPOINT 1 — Phone portrait (≤ 480px)
    ═══════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .sg { grid-template-columns: 1fr; }
+  /* Carousel cards slightly narrower for smaller screens */
+  .sg > .sc,
+  .sg > .sc.spy { flex: 0 0 88vw; max-width: 88vw; }
+  .sg { scroll-padding: 0 6vw; padding: 0 6vw 4px; }
+
   .sc-sub span::after { display: none; }
   .sc-sub { flex-direction: column; gap: 1px; }
   .sc-metrics span::after { display: none; }
   .sc-metrics { flex-direction: column; gap: 1px; }
+
   .tab-btn { padding: 5px 10px; font-size: .76rem; }
+
+  /* ── Backtest ── */
   .bt-metrics { grid-template-columns: repeat(2, 1fr); }
   .bt-info-row { flex-direction: column; }
   .bt-info-item { min-width: 0; }
   .bt-bench { flex-direction: column; gap: 8px; align-items: flex-start; }
+
+  /* ── KPIs ── */
   .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .kpi-card { padding: 10px 8px; }
   .kpi-value { font-size: .95rem; }
   .dp-chart { height: 140px; }
+
+  /* ── Header compact ── */
+  .hdr { padding: 10px 12px; }
+  .lang-btn { height: 30px; padding: 0 10px; font-size: .72rem; }
+  .theme-btn { width: 34px; height: 34px; font-size: .9rem; }
 }
