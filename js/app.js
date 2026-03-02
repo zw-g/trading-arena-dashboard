@@ -141,7 +141,7 @@ function renderBt() {
       <th data-c="ret" data-t="n">${T('return_col')}</th>
       <th data-c="ann" data-t="n" class="hmob">${T('annual')}</th>
       <th data-c="sh" data-t="n" class="hmob">${T('sharpe')}</th>
-      <th data-c="dd" data-t="n">${T('max_dd')}</th>
+      <th data-c="dd" data-t="n" class="hmob">${T('max_dd')}</th>
       <th data-c="wr" data-t="n" class="hmob">${T('win_rate')}</th>
       <th data-c="m" data-t="s" class="hmob">${T('mode')}</th>
     </tr></thead><tbody>${ranked.map((r, i) => `<tr>
@@ -151,7 +151,7 @@ function renderBt() {
       <td class="${pc(r.ret)}" style="font-weight:700">${fp(r.ret)}</td>
       <td class="${pc(r.ann)} hmob">${fp(r.ann)}</td>
       <td class="hmob">${fmt(r.sharpe, 2)}</td>
-      <td class="${pc(r.dd)}">${fmt(r.dd, 1)}%</td>
+      <td class="${pc(r.dd)} hmob">${fmt(r.dd, 1)}%</td>
       <td class="hmob">${fmt(r.wr, 1)}%</td>
       <td class="hmob">${modeBadge(r.mode, r.llm)}</td>
     </tr>`).join('')}</tbody></table></div>`;
@@ -186,7 +186,7 @@ function renderBt() {
   h += '<div class="bt-expand" id="btExpand"><div class="bt-expand-inner" id="btExpandInner"></div></div>';
 
   /* ── Returns chart with time pills ── */
-  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('returns_curve')}</div>${timePillsHTML('btTimePills','setBtTimeRange')}<div style="position:relative;height:340px"><canvas id="bRetC"></canvas></div></div>`;
+  h += `<div class="box"><div class="stitle"><span class="i">📈</span> ${T('returns_curve')}</div>${timePillsHTML('btTimePills','setBtTimeRange')}<div style="position:relative;height:${window.innerWidth < 500 ? 260 : 340}px"><canvas id="bRetC"></canvas></div></div>`;
 
   /* ── Heatmap ── */
   h += `<div class="box"><div class="stitle"><span class="i">🗓️</span> ${T('monthly_heatmap')}</div><div id="bHM"></div></div>`;

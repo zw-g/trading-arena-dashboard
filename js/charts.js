@@ -210,7 +210,7 @@ function chartOpts(unit, opts) {
       }
     },
     scales: {
-      x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: 8, maxRotation: 0, autoSkip: true, font: { size: 10, family: getCS('--font-sans') || undefined } }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } },
+      x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: window.innerWidth < 500 ? 4 : 8, maxRotation: 0, autoSkip: true, font: { size: window.innerWidth < 500 ? 9 : 10, family: getCS('--font-sans') || undefined } }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } },
       y: { ticks: { color: getCS('--text-dim'), font: { size: 10.5, family: getCS('--font-sans') || undefined }, callback: v => unit === '$' ? '$' + v.toLocaleString() : v.toFixed(1) + '%' }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } }
     }
   };

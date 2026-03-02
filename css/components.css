@@ -444,9 +444,14 @@ tbody tr:hover { background: var(--brand-bg); }
    COMPARISON TABLE
    ═══════════════════════════════════════════════════════ */
 .cmp-table { width: 100%; border-collapse: collapse; font-size: var(--text-base); }
-.cmp-table thead th { cursor: pointer; user-select: none; }
+.cmp-table thead th { cursor: pointer; user-select: none; white-space: nowrap; font-size: var(--text-xs); }
 .cmp-table td { text-align: center; }
 .cmp-table td:first-child { text-align: left; }
+@media (max-width: 480px) {
+  .cmp-table { font-size: var(--text-sm); }
+  .cmp-table thead th { font-size: 0.6rem; letter-spacing: 0; }
+  .cmp-table td, .cmp-table th { padding: 6px 4px; }
+}
 .cmp-best {
   background: var(--green-bg) !important; color: var(--green) !important;
   font-weight: var(--weight-bold) !important; border-radius: 4px;
