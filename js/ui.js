@@ -656,24 +656,13 @@ function _tlRender(id) {
   const totalH = N * TL_ROW_H + (exp != null ? TL_DETAIL_H : 0);
   inner.style.height = totalH + 'px';
 
-  /* If viewport is not visible yet (tab hidden), defer render */
-  if (vp.clientHeight === 0 && N > 0) {
-    if (!s._pendingRender) {
-      s._pendingRender = true;
-      const obs = new IntersectionObserver(entries => {
-        if (entries[0].isIntersecting) { obs.disconnect(); s._pendingRender = false; _tlRender(id); }
-      });
-      obs.observe(vp);
-    }
-    return;
-  }
-
   if (!N) {
     inner.innerHTML = `<div class="tl-empty"><div class="tl-empty-icon">📭</div><div class="tl-empty-text">${T('no_completed_trades')}</div></div>`;
     return;
   }
 
   const scrollTop = vp.scrollTop;
+  const viewH = vp.clientHeight || 480; /* fallback when parent is display:none */
   const buffer = 5;
 
   /* Find visible range */
