@@ -165,7 +165,7 @@ function chartOpts(unit, opts) {
     interaction: { mode: 'nearest', intersect: false },
     plugins: {
       highlightLine: true,
-      legend: { labels: { color: getCS('--text-dim'), usePointStyle: true, pointStyle: 'circle', font: { size: 11, family: getCS('--font-sans') || undefined }, padding: 14 } },
+      legend: { position: 'top', align: 'center', labels: { color: getCS('--text-dim'), usePointStyle: true, pointStyle: 'circle', font: { size: 10, family: getCS('--font-sans') || undefined }, padding: 10, boxWidth: 8, boxHeight: 8 } },
       tooltip: {
         mode: 'nearest', intersect: false,
         backgroundColor: getCS('--card'), titleColor: getCS('--text'), bodyColor: getCS('--text-sec'),
@@ -206,7 +206,7 @@ function chartOpts(unit, opts) {
       }
     },
     scales: {
-      x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: 10, font: { size: 10.5, family: getCS('--font-sans') || undefined } }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } },
+      x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: 8, maxRotation: 0, autoSkip: true, font: { size: 10, family: getCS('--font-sans') || undefined } }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } },
       y: { ticks: { color: getCS('--text-dim'), font: { size: 10.5, family: getCS('--font-sans') || undefined }, callback: v => unit === '$' ? '$' + v.toLocaleString() : v.toFixed(1) + '%' }, grid: { color: getCS('--chart-grid'), lineWidth: 0.5 } }
     }
   };
@@ -443,11 +443,16 @@ function rBHM(keys, strats) {
 
   /* Build grid with explicit column count for alignment */
   const cols = months.length;
-  let h = `<div class="hmg" style="grid-template-columns:130px repeat(${cols},1fr)">`;
+  let h = `<div class="hmg" style="grid-template-columns:120px repeat(${cols},minmax(52px,1fr))">`;
 
-  /* Header row: empty corner + month labels */
+  /* Header row: empty corner + short month labels (Jan 24 format) */
+  const shortMonth = m => {
+    const [y, mo] = m.split('-');
+    const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${names[parseInt(mo)-1]}<br><span style="opacity:.5">${y.slice(2)}</span>`;
+  };
   h += '<div class="hmc hmh"></div>';
-  months.forEach(m => h += `<div class="hmc hmh">${m}</div>`);
+  months.forEach(m => h += `<div class="hmc hmh">${shortMonth(m)}</div>`);
 
   /* Data rows */
   keys.forEach(k => {
