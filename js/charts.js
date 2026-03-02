@@ -67,11 +67,15 @@ function flushDeferredCharts(tab) {
   const jobs = _deferredCharts[tab];
   if (!jobs) return;
   delete _deferredCharts[tab];
+  /* Double rAF to ensure tab is visible and laid out before measuring */
   requestAnimationFrame(() => {
-    jobs.forEach(job => {
-      const el = document.getElementById(job.id);
-      const container = el?.closest('.box') || el?.parentElement;
-      lazyChart(container, tab + '_' + job.id, job.fn);
+    requestAnimationFrame(() => {
+      jobs.forEach(job => {
+        const el = document.getElementById(job.id);
+        if (!el) return;
+        /* Force render — don't lazy-load deferred charts, they were waiting for tab switch */
+        job.fn();
+      });
     });
   });
 }
