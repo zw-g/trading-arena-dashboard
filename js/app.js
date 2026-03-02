@@ -164,7 +164,7 @@ function renderBt() {
     const diff = s.total_return != null && spy != null ? s.total_return - spy : null;
     const mode = getMode(s, k);
     const verBadge = m.version ? `<span class="badge badge-ver">v${esc(m.version)}</span>` : '';
-    h += `<div class="sc" style="--sc-c:${c}" onclick="toggleBtDetail('${k}')" data-key="${k}">
+    h += `<div class="sc" style="--sc-c:${c}" onclick="onCardClick(this,'${k}','bt')" data-key="${k}">
       <div class="sc-top"><span class="sc-dot" style="background:${c}"></span>
         <span class="sc-name" data-key="${k}" data-src="bt"
           onmouseenter="ttEnter(this,'bt')" onmouseleave="ttLeave()"

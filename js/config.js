@@ -40,6 +40,19 @@ const I18N = {
     rank:'#',
     time_1m:'1M', time_3m:'3M', time_6m:'6M', time_1y:'1Y', time_all:'ALL',
     strategy_comparison:'Strategy Comparison', avg_hold_days:'Avg Hold',
+    drawdown:'Drawdown', holdings:'Holdings', entry_price:'Avg Cost',
+    current_price:'Current', weight_pct:'Weight', pnl_col:'P&L%',
+    /* T24: Trade List */
+    trade_list:'Trade List', all_trades:'All Trades', direction:'Direction',
+    entry_date:'Entry Date', exit_date:'Exit Date', entry_price_col:'Entry Price',
+    exit_price_col:'Exit Price', pnl_dollar:'P&L$', pnl_pct_col:'P&L%',
+    hold_days_col:'Hold Days', exit_type_col:'Exit Type', search_ticker:'Search ticker…',
+    no_completed_trades:'No completed trades yet', confidence_col:'Confidence',
+    strategy_col:'Strategy', trade_detail:'Trade Detail',
+    long_dir:'Long', short_dir:'Short',
+    exit_stop_loss:'Stop Loss', exit_take_profit:'Take Profit',
+    exit_signal_sell:'Signal Sell', exit_signal_reversal:'Signal Reversal',
+    showing_trades:'Showing {n} of {total} trades', sort_by_pnl:'Sort by P&L%',
   },
   zh: {
     paper_trading:'模拟交易', backtests:'回测', live_trading:'实盘交易',
@@ -77,6 +90,19 @@ const I18N = {
     rank:'#',
     time_1m:'1月', time_3m:'3月', time_6m:'6月', time_1y:'1年', time_all:'全部',
     strategy_comparison:'策略对比', avg_hold_days:'平均持仓',
+    drawdown:'回撤曲线', holdings:'持仓明细', entry_price:'成本价',
+    current_price:'现价', weight_pct:'权重', pnl_col:'盈亏%',
+    /* T24: Trade List */
+    trade_list:'交易列表', all_trades:'全部交易', direction:'方向',
+    entry_date:'入场日期', exit_date:'出场日期', entry_price_col:'入场价',
+    exit_price_col:'出场价', pnl_dollar:'盈亏$', pnl_pct_col:'盈亏%',
+    hold_days_col:'持仓天数', exit_type_col:'退出类型', search_ticker:'搜索代码…',
+    no_completed_trades:'暂无已完成交易', confidence_col:'信心度',
+    strategy_col:'策略', trade_detail:'交易详情',
+    long_dir:'做多', short_dir:'做空',
+    exit_stop_loss:'止损', exit_take_profit:'止盈',
+    exit_signal_sell:'信号卖出', exit_signal_reversal:'信号反转',
+    showing_trades:'显示 {n}/{total} 笔交易', sort_by_pnl:'按盈亏%排序',
   }
 };
 

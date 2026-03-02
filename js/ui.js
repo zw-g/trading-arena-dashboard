@@ -204,8 +204,47 @@ function ttTap(el, src) {
 /* ═══════════════════════════════════════════════════════
    DETAIL PANEL (Level 2 + 3)
    ═══════════════════════════════════════════════════════ */
+
+/* ── KPI card helper ── */
+function kpiCard(label, value, indicator) {
+  const arrow = indicator == null ? ''
+    : indicator > 0.001 ? '<span class="kpi-arrow pos">▲</span>'
+    : indicator < -0.001 ? '<span class="kpi-arrow neg">▼</span>' : '';
+  const valClass = indicator == null ? '' : pc(indicator);
+  return `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-value ${valClass}">${value}${arrow}</div></div>`;
+}
+
+/* ── Holdings table builder ── */
+function buildHoldingsTable(pos, posKeys) {
+  const items = posKeys.map(tk => {
+    const p = pos[tk];
+    const pnlPct = p.pnl_pct != null ? p.pnl_pct : (p.current_price && p.avg_cost ? ((p.current_price / p.avg_cost - 1) * 100) : null);
+    return { ticker: tk, ...p, pnlPct };
+  }).sort((a, b) => (b.pnlPct || 0) - (a.pnlPct || 0));
+
+  let html = `<div class="dp-section"><div class="dp-label">💼 ${T('holdings')} (${posKeys.length})</div>`;
+  html += `<div style="overflow-x:auto"><table class="holdings-table">`;
+  html += `<thead><tr><th>${T('ticker')}</th><th>${T('shares')}</th><th>${T('entry_price')}</th><th>${T('current_price')}</th><th>${T('pnl_col')}</th><th>${T('weight_pct')}</th></tr></thead>`;
+  html += `<tbody>`;
+  items.forEach(item => {
+    html += `<tr>
+      <td style="font-weight:700">${esc(item.ticker)}</td>
+      <td>${item.shares || 0}</td>
+      <td>${item.avg_cost != null ? '$' + fmt(item.avg_cost, 2) : '—'}</td>
+      <td>${item.current_price != null ? '$' + fmt(item.current_price, 2) : '—'}</td>
+      <td class="${pc(item.pnlPct)}" style="font-weight:700">${item.pnlPct != null ? fp(item.pnlPct) : '—'}</td>
+      <td>${item.weight != null ? fmt(item.weight, 1) + '%' : '—'}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div></div>`;
+  return html;
+}
+
 function openPanel(stratData, key, source) {
   panelOpen = true;
+  /* Destroy previous panel charts */
+  dc('dpSpark'); dc('dpDrawdown'); dc('dpMonthly');
+
   const m = getMeta(stratData, key), c = rc(key);
   document.getElementById('dpDot').style.background = c;
   document.getElementById('dpTitle').textContent = m.name || displayName(stratData, key);
@@ -213,8 +252,67 @@ function openPanel(stratData, key, source) {
   if (m.version) { vEl.textContent = 'v' + m.version; vEl.style.display = ''; } else vEl.style.display = 'none';
 
   let html = '';
+  const isPaper = source === 'paper';
+  const cur = stratData?.current || {};
 
-  /* Description section */
+  /* ── 1. KPI Grid (2×3) ── */
+  const totalReturn = isPaper ? (cur.return_pct ?? stratData.total_return) : stratData.total_return;
+  const sharpe = stratData.sharpe;
+  const maxDD = isPaper ? (cur.max_drawdown ?? stratData.max_drawdown) : stratData.max_drawdown;
+  const winRate = stratData.win_rate;
+  const totalTrades = isPaper ? (cur.trades || 0) : (stratData.trades || stratData.total_closed || 0);
+  const avgHoldDays = stratData.avg_hold_days;
+
+  html += `<div class="kpi-grid">`;
+  html += kpiCard(T('total_return'), fp(totalReturn), totalReturn);
+  html += kpiCard(T('sharpe_ratio'), fmt(sharpe, 2), sharpe);
+  html += kpiCard(T('max_dd'), maxDD != null ? fmt(maxDD, 1) + '%' : '—', maxDD);
+  html += kpiCard(T('win_rate'), winRate != null ? fmt(winRate, 1) + '%' : '—', winRate != null ? winRate - 50 : null);
+  html += kpiCard(T('trades'), totalTrades, null);
+  html += kpiCard(T('avg_hold_days'), avgHoldDays != null ? fmt(avgHoldDays, 1) + 'd' : '—', null);
+  html += `</div>`;
+
+  /* ── 2. Drawdown Chart ── */
+  const navH = stratData?.nav_history || [];
+  if (navH.length > 1) {
+    let peak = -Infinity, maxDDVal = 0, maxDDDate = '';
+    navH.forEach(h => {
+      if (h.nav > peak) peak = h.nav;
+      const dd = ((h.nav - peak) / peak) * 100;
+      if (dd < maxDDVal) { maxDDVal = dd; maxDDDate = h.date; }
+    });
+    html += `<div class="dp-section">
+      <div class="dp-label">📉 ${T('drawdown')}</div>
+      <div class="dp-chart"><canvas id="dpDrawdown"></canvas></div>
+      <div class="dp-dd-annotation">⚠️ ${T('max_dd')}: <strong class="neg">${fmt(maxDDVal, 2)}%</strong> (${maxDDDate})</div>
+    </div>`;
+  }
+
+  /* ── 3. Monthly Returns Bar Chart ── */
+  const mr = stratData?.monthly_returns || {};
+  const mrKeys = Object.keys(mr).sort();
+  if (mrKeys.length) {
+    html += `<div class="dp-section">
+      <div class="dp-label">📊 ${T('monthly_returns')}</div>
+      <div class="dp-chart"><canvas id="dpMonthly"></canvas></div>
+    </div>`;
+  }
+
+  /* ── 4. NAV Sparkline ── */
+  if (navH.length > 1) {
+    html += `<div class="dp-section"><div class="dp-label">📈 ${T('nav_hist')}</div><div class="dp-spark"><canvas id="dpSpark"></canvas></div></div>`;
+  }
+
+  /* ── 5. Holdings Table ── */
+  const pos = stratData?.positions || {};
+  const posKeys = Object.keys(pos);
+  if (posKeys.length > 0) {
+    html += buildHoldingsTable(pos, posKeys);
+  } else if (isPaper) {
+    html += `<div class="dp-section"><div class="dp-label">💼 ${T('holdings')}</div><div class="empty"><div class="ei">📦</div>${T('no_positions')}</div></div>`;
+  }
+
+  /* ── 6. Description section ── */
   const descPri = getDesc(m), descSec = getDescSec(m);
   if (descPri || descSec) {
     html += `<div class="dp-section"><div class="dp-label">${T('about_strategy')}</div>`;
@@ -227,7 +325,7 @@ function openPanel(stratData, key, source) {
     html += `</div>`;
   }
 
-  /* Methodology section */
+  /* ── 7. Methodology section ── */
   const methPri = getMethod(m), methSec = getMethodSec(m);
   if (methPri || methSec) {
     html += `<div class="dp-section"><div class="bt-method"><div class="dp-label">📐 ${T('methodology')}</div>`;
@@ -236,7 +334,7 @@ function openPanel(stratData, key, source) {
     html += `</div></div>`;
   }
 
-  /* AI Mode & Cost & Coverage */
+  /* ── 8. AI Mode & Cost & Coverage ── */
   if (m.ai_mode || m.cost_formula || m.signals_per_day) {
     html += `<div class="dp-section"><div class="bt-info-row">`;
     if (m.ai_mode) html += `<div class="bt-info-item"><span class="bt-info-label">🤖 ${T('ai_mode')}</span><span>${esc(m.ai_mode)}</span></div>`;
@@ -245,7 +343,7 @@ function openPanel(stratData, key, source) {
     html += `</div></div>`;
   }
 
-  /* Schedule & Risk from strategy_configs.json */
+  /* ── 9. Schedule & Risk from strategy_configs.json ── */
   const sc = SC[key] || {};
   const sched = sc.schedule || {};
   const rm = sc.risk_management || sc.risk || {};
@@ -304,53 +402,7 @@ function openPanel(stratData, key, source) {
     }
   }
 
-  /* NAV sparkline */
-  const navH = stratData?.nav_history || [];
-  if (navH.length > 1) {
-    html += `<div class="dp-section"><div class="dp-label">${T('nav_hist')}</div><div class="dp-spark"><canvas id="dpSpark"></canvas></div></div>`;
-  }
-
-  /* Current stats mini-bar */
-  const cur = stratData?.current;
-  if (cur) {
-    html += `<div class="dp-section"><div class="dp-label">${T('current_status')}</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center">
-          <div style="font-size:.68rem;color:var(--text-dim);text-transform:uppercase">NAV</div>
-          <div style="font-size:1.1rem;font-weight:800;margin-top:2px" class="${pc(cur.return_pct)}">${fm(cur.nav)}</div>
-        </div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center">
-          <div style="font-size:.68rem;color:var(--text-dim);text-transform:uppercase">${T('return_col')}</div>
-          <div style="font-size:1.1rem;font-weight:800;margin-top:2px" class="${pc(cur.return_pct)}">${fp(cur.return_pct)}</div>
-        </div>
-        <div style="background:var(--bg);border-radius:var(--radius-sm);padding:10px;text-align:center">
-          <div style="font-size:.68rem;color:var(--text-dim);text-transform:uppercase">${T('max_dd')}</div>
-          <div style="font-size:1.1rem;font-weight:800;margin-top:2px" class="${pc(cur.max_drawdown)}">${fmt(cur.max_drawdown, 1)}%</div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  /* Positions */
-  const pos = stratData?.positions || {};
-  const posKeys = Object.keys(pos);
-  if (posKeys.length > 0) {
-    html += `<div class="dp-section"><div class="dp-label">${T('current_positions')} (${posKeys.length})</div><div class="pos-list">`;
-    posKeys.forEach(tk => {
-      const p = pos[tk];
-      const pnlPct = p.pnl_pct != null ? p.pnl_pct : (p.current_price && p.avg_cost ? ((p.current_price / p.avg_cost - 1) * 100) : null);
-      html += `<div class="pos-item">
-        <div class="pi-ticker">${esc(tk)}</div>
-        <div class="pi-shares">${p.shares || 0} ${T('shares')}${p.avg_cost != null ? ' @ $' + fmt(p.avg_cost, 2) : ''}</div>
-        <div class="pi-pnl ${pc(pnlPct)}">${pnlPct != null ? fp(pnlPct) : '—'}</div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  } else {
-    html += `<div class="dp-section"><div class="dp-label">${T('current_positions')}</div><div class="empty"><div class="ei">📦</div>${T('no_positions')}</div></div>`;
-  }
-
-  /* Trade timeline (Level 2, each clickable for Level 3) */
+  /* ── 10. Trade timeline (Level 2, each clickable for Level 3) ── */
   const trades = (stratData?.trades || []).slice(-20).reverse();
   if (trades.length > 0) {
     html += `<div class="dp-section"><div class="dp-label">${T('recent_trades')} (${trades.length})</div><div class="trade-timeline">`;
@@ -388,11 +440,19 @@ function openPanel(stratData, key, source) {
   document.getElementById('detailPanel').classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  if (navH.length > 1) setTimeout(() => renderSparkline(navH, c), 50);
+  /* Render charts after DOM insertion */
+  setTimeout(() => {
+    if (navH.length > 1) {
+      renderDrawdownChart(navH, c);
+      renderSparkline(navH, c);
+    }
+    if (mrKeys.length) renderPanelMonthlyChart(mr);
+  }, 50);
 }
 
 function closePanel() {
   panelOpen = false;
+  dc('dpSpark'); dc('dpDrawdown'); dc('dpMonthly');
   document.getElementById('panelOverlay').classList.remove('open');
   document.getElementById('detailPanel').classList.remove('open');
   document.body.style.overflow = '';

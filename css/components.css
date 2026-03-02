@@ -266,7 +266,8 @@ tbody tr:hover { background: var(--brand-bg); }
 .panel-overlay.open { opacity: 1; pointer-events: auto; }
 
 .detail-panel {
-  position: fixed; top: 0; right: 0; bottom: 0; width: 480px; max-width: 100%;
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 40%; min-width: 420px; max-width: 640px;
   background: var(--panel-bg); z-index: 310;
   transform: translateX(100%); transition: transform .35s var(--ease);
   display: flex; flex-direction: column; overflow: hidden;
@@ -344,6 +345,53 @@ tbody tr:hover { background: var(--brand-bg); }
 /* Mini sparkline canvas in panel */
 .dp-spark { height: 120px; margin-top: 8px; }
 .dp-spark canvas { width: 100%!important; height: 100%!important; }
+
+/* ── KPI Grid (2×3) ── */
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+}
+.kpi-card {
+  background: var(--bg); border-radius: var(--radius-sm); padding: 14px 10px; text-align: center;
+  transition: background .15s;
+}
+.kpi-card:hover { background: var(--brand-bg); }
+.kpi-label {
+  font-size: .65rem; color: var(--text-dim); text-transform: uppercase;
+  letter-spacing: .5px; margin-bottom: 6px; font-weight: 700;
+}
+.kpi-value {
+  font-size: 1.15rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.kpi-arrow { font-size: .65rem; }
+.kpi-arrow.pos { color: var(--green); }
+.kpi-arrow.neg { color: var(--red); }
+
+/* ── Chart container in panel ── */
+.dp-chart { height: 180px; margin-top: 8px; }
+.dp-chart canvas { width: 100%!important; height: 100%!important; }
+
+/* ── Drawdown annotation ── */
+.dp-dd-annotation {
+  font-size: .74rem; color: var(--text-sec); margin-top: 8px;
+  padding: 6px 10px; background: var(--red-bg); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--red);
+}
+
+/* ── Holdings table ── */
+.holdings-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+.holdings-table th {
+  text-align: left; padding: 8px 10px; color: var(--text-dim);
+  font-weight: 700; font-size: .68rem; text-transform: uppercase;
+  letter-spacing: .4px; border-bottom: 2px solid var(--border); white-space: nowrap;
+}
+.holdings-table td {
+  padding: 8px 10px; border-bottom: 1px solid var(--border-light); white-space: nowrap;
+}
+.holdings-table tr:last-child td { border-bottom: none; }
+.holdings-table tbody tr { transition: background .15s; }
+.holdings-table tbody tr:hover { background: var(--brand-bg); }
+.holdings-table tbody tr:nth-child(even) { background: var(--bg); }
 
 /* ═══════════════════════════════════════════════════════
    MODE BADGES

@@ -546,6 +546,116 @@ function renderBtMonthly(months, mr, color) {
   });
 }
 
+/* ── Drawdown chart in detail panel ── */
+function renderDrawdownChart(navH, color) {
+  dc('dpDrawdown');
+  const canvas = document.getElementById('dpDrawdown');
+  if (!canvas || navH.length < 2) return;
+
+  let peak = -Infinity;
+  const ddData = [], dates = [];
+  navH.forEach(h => {
+    if (h.nav > peak) peak = h.nav;
+    ddData.push(((h.nav - peak) / peak) * 100);
+    dates.push(h.date);
+  });
+
+  let maxDDVal = 0, maxDDIdx = 0;
+  ddData.forEach((d, i) => { if (d < maxDDVal) { maxDDVal = d; maxDDIdx = i; } });
+
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const redLine = isDark ? 'rgba(248,113,113,0.8)' : 'rgba(239,68,68,0.7)';
+  const redFill = isDark ? 'rgba(248,113,113,0.15)' : 'rgba(239,68,68,0.1)';
+  const redPoint = isDark ? '#f87171' : '#ef4444';
+
+  const ptRadius = ddData.map((_, i) => i === maxDDIdx ? 6 : 0);
+  const ptBg = ddData.map((_, i) => i === maxDDIdx ? redPoint : 'transparent');
+
+  CI['dpDrawdown'] = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+        data: ddData,
+        borderColor: redLine,
+        backgroundColor: redFill,
+        borderWidth: 2,
+        tension: 0.3,
+        pointRadius: ptRadius,
+        pointBackgroundColor: ptBg,
+        pointBorderColor: ptBg,
+        pointHoverRadius: 4,
+        fill: 'origin'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: getCS('--card'), titleColor: getCS('--text'),
+          bodyColor: getCS('--text-sec'), borderColor: getCS('--border'),
+          borderWidth: 1, cornerRadius: 8,
+          callbacks: {
+            label: ctx => ` Drawdown: ${ctx.parsed.y.toFixed(2)}%`,
+            afterLabel: ctx => ctx.dataIndex === maxDDIdx ? '⚠️ Max Drawdown' : ''
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: 8, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: getCS('--text-dim'), font: { size: 10 }, callback: v => v.toFixed(1) + '%' }, grid: { color: getCS('--chart-grid') } }
+      }
+    }
+  });
+}
+
+/* ── Monthly returns bar chart in detail panel ── */
+function renderPanelMonthlyChart(monthlyReturns) {
+  dc('dpMonthly');
+  const canvas = document.getElementById('dpMonthly');
+  if (!canvas) return;
+
+  const months = Object.keys(monthlyReturns).sort();
+  if (!months.length) return;
+
+  const vals = months.map(m => monthlyReturns[m]);
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const colors = vals.map(v => v >= 0
+    ? (isDark ? 'rgba(52,211,153,0.7)' : 'rgba(16,185,129,0.7)')
+    : (isDark ? 'rgba(248,113,113,0.7)' : 'rgba(239,68,68,0.7)')
+  );
+
+  CI['dpMonthly'] = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: months,
+      datasets: [{
+        data: vals,
+        backgroundColor: colors,
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: getCS('--card'), titleColor: getCS('--text'),
+          bodyColor: getCS('--text-sec'), borderColor: getCS('--border'),
+          borderWidth: 1, cornerRadius: 8,
+          callbacks: { label: ctx => ` ${ctx.parsed.y >= 0 ? '+' : ''}${ctx.parsed.y.toFixed(2)}%` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: getCS('--text-dim'), maxTicksLimit: 12, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: getCS('--text-dim'), font: { size: 10 }, callback: v => v.toFixed(0) + '%' }, grid: { color: getCS('--chart-grid') } }
+      }
+    }
+  });
+}
+
 /* ── Backtest detail sparkline ── */
 function renderBtDetailSpark(navH, color) {
   dc('btDetailSpark');

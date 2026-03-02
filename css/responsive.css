@@ -6,7 +6,7 @@
   .twocol { grid-template-columns: 1fr; }
   .dw { max-width: 200px; }
   .skel-grid { grid-template-columns: 1fr 1fr; }
-  .detail-panel { width: 400px; }
+  .detail-panel { width: 50%; min-width: 380px; max-width: 500px; }
   .bt-top-trades { grid-template-columns: 1fr 1fr; }
 }
 
@@ -40,14 +40,17 @@
   .time-pills { gap: 3px; }
   .pill-btn { padding: 4px 10px; font-size: .7rem; }
 
-  /* Panel → bottom sheet */
+  /* Panel → fullscreen overlay */
   .detail-panel {
-    top: auto; right: 0; bottom: 0; left: 0; width: 100%;
-    max-height: 92vh; border-radius: var(--radius) var(--radius) 0 0;
-    transform: translateY(100%); border-left: none; border-top: 1px solid var(--border);
-    box-shadow: 0 -4px 24px rgba(0,0,0,.1);
+    top: 0; right: 0; bottom: 0; left: 0; width: 100%; max-width: 100%;
+    min-width: 0; max-height: 100vh; border-radius: 0;
+    transform: translateX(100%); border-left: none;
+    box-shadow: none;
   }
-  .detail-panel.open { transform: translateY(0); }
+  .detail-panel.open { transform: translateX(0); }
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kpi-value { font-size: 1rem; }
+  .dp-chart { height: 160px; }
   .dp-head { padding: 14px 16px; }
   .dp-body { padding: 16px; }
   .bt-top-trades { grid-template-columns: 1fr; }
@@ -70,4 +73,8 @@
   .bt-info-row { flex-direction: column; }
   .bt-info-item { min-width: 0; }
   .bt-bench { flex-direction: column; gap: 8px; align-items: flex-start; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .kpi-card { padding: 10px 8px; }
+  .kpi-value { font-size: .95rem; }
+  .dp-chart { height: 140px; }
 }
