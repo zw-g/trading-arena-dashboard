@@ -641,3 +641,53 @@ tbody tr:hover { background: var(--brand-bg); }
   background-size: 200% 100%; animation: shimmer 1.5s infinite;
 }
 .skel.tall { height: 160px; grid-column: 1 / -1; }
+
+/* ═══════════════════════════════════════════════════════
+   SKELETON LOADING (T26)
+   ═══════════════════════════════════════════════════════ */
+.skeleton-container { animation: fadeUp .3s var(--ease); }
+
+.skel-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  position: relative; overflow: hidden; min-height: 140px;
+}
+.skel-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: var(--skeleton);
+}
+.skel-inner { position: relative; z-index: 1; }
+
+.skel-line {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, var(--skeleton) 25%, var(--skeleton-hi) 50%, var(--skeleton) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  margin-bottom: 10px;
+}
+.skel-line.w40 { width: 40%; }
+.skel-line.w60 { width: 60%; }
+.skel-line.w80 { width: 80%; }
+.skel-line.lg { height: 28px; border-radius: 8px; }
+
+.skel-chart-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 24px;
+}
+
+.skel-chart-area {
+  height: 340px; border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--skeleton) 25%, var(--skeleton-hi) 50%, var(--skeleton) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}
+.skel-chart-area.sm { height: 200px; }
+
+.skel-table { margin-top: 8px; }
+.skel-table-row {
+  display: flex; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+.skel-table-cell {
+  height: 14px; border-radius: 4px; flex: 1;
+  background: linear-gradient(90deg, var(--skeleton) 25%, var(--skeleton-hi) 50%, var(--skeleton) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite;
+}

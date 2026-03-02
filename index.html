@@ -67,13 +67,42 @@
 <!-- Paper Trading -->
 <div class="pane on" id="p-paper">
   <div class="sel"><label for="sSel">Session</label><select id="sSel" onchange="renderPaper()"></select></div>
-  <div id="paperOut"><div class="ld">Loading paper trading data…</div></div>
+  <div id="paperOut">
+    <div class="skeleton-container">
+      <div class="sg">
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+      </div>
+      <div class="twocol">
+        <div class="skel-chart-box"><div class="skel-line w40"></div><div class="skel-chart-area"></div></div>
+        <div class="skel-chart-box"><div class="skel-line w60"></div><div class="skel-chart-area sm"></div></div>
+      </div>
+      <div class="skel-chart-box"><div class="skel-line w40"></div>
+        <div class="skel-table">
+          <div class="skel-table-row"><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div></div>
+          <div class="skel-table-row"><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div></div>
+          <div class="skel-table-row"><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div><div class="skel-table-cell"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Backtests -->
 <div class="pane" id="p-bt">
   <div class="sel"><label for="bSel">Run</label><select id="bSel" onchange="renderBt()"></select></div>
-  <div id="btOut"><div class="ld">Loading backtest data…</div></div>
+  <div id="btOut">
+    <div class="skeleton-container">
+      <div class="sg">
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+        <div class="skel-card"><div class="skel-inner"><div class="skel-line w60"></div><div class="skel-line lg w40"></div><div class="skel-line w80"></div></div></div>
+      </div>
+      <div class="skel-chart-box"><div class="skel-line w40"></div><div class="skel-chart-area"></div></div>
+      <div class="skel-chart-box"><div class="skel-line w40"></div><div class="skel-chart-area sm"></div></div>
+    </div>
+  </div>
 </div>
 
 <!-- Live -->

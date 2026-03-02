@@ -15,9 +15,54 @@ let firstLoad = true;
 /* ── Chart instance cleanup ── */
 const dc = (id) => { if (CI[id]) { CI[id].destroy(); delete CI[id]; } };
 
-/* ── Data loading ── */
+/* ═══════════════════════════════════════════════════════
+   SESSION STORAGE CACHE (5-min TTL)
+   ═══════════════════════════════════════════════════════ */
+const CACHE_TTL = 5 * 60 * 1000;
+const CACHE_PFX = 'tad_';
+
+function getCached(key) {
+  try {
+    const raw = sessionStorage.getItem(CACHE_PFX + key);
+    if (!raw) return null;
+    const { data, ts } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { sessionStorage.removeItem(CACHE_PFX + key); return null; }
+    return data;
+  } catch { return null; }
+}
+
+function setCache(key, data) {
+  try { sessionStorage.setItem(CACHE_PFX + key, JSON.stringify({ data, ts: Date.now() })); }
+  catch { /* quota exceeded — ignore */ }
+}
+
+function updateTimestamp() {
+  const ts = PD?.updated || BD?.updated;
+  if (ts) {
+    const d = new Date(ts);
+    const locale = LANG === 'zh' ? 'zh-CN' : 'en-US';
+    document.getElementById('lastUpd').textContent = T('updated') + ' ' + d.toLocaleDateString(locale, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
+  }
+}
+
+/* ── Data loading with cache-first strategy ── */
 async function loadAll() {
   try {
+    /* ── Instant display from cache on first load ── */
+    let usedCache = false;
+    if (firstLoad) {
+      const cPD = getCached('paper'), cBD = getCached('bt'), cSC = getCached('sc');
+      if (cPD && cBD) {
+        PD = cPD; BD = cBD; SC = cSC || {};
+        popSel(); popBtSel();
+        renderPaper(); renderBt();
+        updateTimestamp();
+        usedCache = true;
+        firstLoad = false;
+      }
+    }
+
+    /* ── Fetch fresh data (always runs, even after cache hit) ── */
     const [pR, bR, sR] = await Promise.all([
       fetch('data/paper_sessions.json?_=' + Date.now()),
       fetch('data/backtests.json?_=' + Date.now()),
@@ -25,24 +70,32 @@ async function loadAll() {
     ]);
     if (!pR.ok) throw new Error('paper_sessions.json: ' + pR.status);
     if (!bR.ok) throw new Error('backtests.json: ' + bR.status);
-    PD = await pR.json();
-    BD = await bR.json();
-    try { SC = await sR.json(); } catch (e) { SC = {}; }
 
-    const ts = PD.updated || BD.updated;
-    if (ts) {
-      const d = new Date(ts);
-      const locale = LANG === 'zh' ? 'zh-CN' : 'en-US';
-      document.getElementById('lastUpd').textContent = T('updated') + ' ' + d.toLocaleDateString(locale, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
-    }
+    const newPD = await pR.json();
+    const newBD = await bR.json();
+    let newSC = {};
+    try { newSC = await sR.json(); } catch (e) { newSC = {}; }
+
+    /* Cache fresh data */
+    setCache('paper', newPD); setCache('bt', newBD); setCache('sc', newSC);
+
+    /* Skip re-render if data unchanged after cache hit */
+    const dataChanged = !usedCache ||
+      (newPD.updated || '') !== (PD?.updated || '') ||
+      (newBD.updated || '') !== (BD?.updated || '');
+
+    PD = newPD; BD = newBD; SC = newSC;
+    updateTimestamp();
+
     if (firstLoad) { popSel(); popBtSel(); firstLoad = false; }
-    renderPaper();
-    renderBt();
+    if (dataChanged) { renderPaper(); renderBt(); }
   } catch (e) {
     console.error(e);
-    const h = `<div class="err">⚠️ ${e.message}</div>`;
-    document.getElementById('paperOut').innerHTML = h;
-    document.getElementById('btOut').innerHTML = h;
+    if (!PD) {
+      const h = `<div class="err">⚠️ ${e.message}</div>`;
+      document.getElementById('paperOut').innerHTML = h;
+      document.getElementById('btOut').innerHTML = h;
+    }
   }
 }
 

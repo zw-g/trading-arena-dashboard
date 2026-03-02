@@ -107,6 +107,8 @@ function switchTab(t) {
   document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.toggle('on', b.dataset.t === t));
   updateStaticText();
   updateScoreboard();
+  /* Render deferred charts for newly visible tab */
+  flushDeferredCharts(t);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -473,6 +475,7 @@ function openPanel(stratData, key, source) {
 function closePanel() {
   panelOpen = false;
   dc('dpSpark'); dc('dpDrawdown'); dc('dpMonthly');
+  destroyTradeList('panelTradeList');
   document.getElementById('panelOverlay').classList.remove('open');
   document.getElementById('detailPanel').classList.remove('open');
   document.body.style.overflow = '';
@@ -550,8 +553,8 @@ function buildTradeList(id, trades, opts) {
     });
   }
 
-  /* Initial sort + render */
-  _tlApply(id);
+  /* Initial sort + render (defer to ensure DOM measurements are ready) */
+  requestAnimationFrame(() => _tlApply(id));
 }
 
 function _tlCols(showStrat) {
@@ -653,13 +656,24 @@ function _tlRender(id) {
   const totalH = N * TL_ROW_H + (exp != null ? TL_DETAIL_H : 0);
   inner.style.height = totalH + 'px';
 
+  /* If viewport is not visible yet (tab hidden), defer render */
+  if (vp.clientHeight === 0 && N > 0) {
+    if (!s._pendingRender) {
+      s._pendingRender = true;
+      const obs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) { obs.disconnect(); s._pendingRender = false; _tlRender(id); }
+      });
+      obs.observe(vp);
+    }
+    return;
+  }
+
   if (!N) {
     inner.innerHTML = `<div class="tl-empty"><div class="tl-empty-icon">📭</div><div class="tl-empty-text">${T('no_completed_trades')}</div></div>`;
     return;
   }
 
   const scrollTop = vp.scrollTop;
-  const viewH = vp.clientHeight;
   const buffer = 5;
 
   /* Find visible range */

@@ -120,6 +120,22 @@
   .bt-expand-inner { padding: 16px; }
   .bt-header { padding: 12px 14px; gap: 8px; }
 
+  /* ── T24: Trade list responsive ── */
+  .tl-header, .tl-row { font-size: .7rem; }
+  .tl-viewport { height: 360px; }
+  .tl-header, .tl-row {
+    grid-template-columns: 60px 42px 72px 72px 62px 62px 62px 62px 42px 68px;
+    padding: 0 8px;
+  }
+  .tl-header-all, .tl-row-all {
+    grid-template-columns: 60px 68px 42px 72px 72px 62px 62px 62px 62px 42px 68px;
+  }
+  .tl-td { padding: 4px 2px; font-size: .7rem; }
+  .tl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tl-header, .tl-viewport { min-width: 700px; }
+  .tl-header-all, .tl-row-all { min-width: 780px; }
+  .tl-detail-grid { grid-template-columns: repeat(2, 1fr); }
+
   /* ── Touch: tables horizontal scroll ── */
   .box table { display: block; }
   .box thead, .box tbody, .box tr { display: table; width: 100%; table-layout: auto; }

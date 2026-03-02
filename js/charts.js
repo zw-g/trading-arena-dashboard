@@ -2,6 +2,80 @@
    CHART.JS RENDERING
    ═══════════════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════════════
+   LAZY CHART RENDERING (IntersectionObserver)
+   ═══════════════════════════════════════════════════════ */
+const _pendingCharts = new Map();
+const _deferredCharts = {};
+let _chartObserver = null;
+
+function _initChartObserver() {
+  if (_chartObserver) return;
+  _chartObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.dataset.lazyChart;
+        const fn = _pendingCharts.get(id);
+        if (fn) { fn(); _pendingCharts.delete(id); }
+        _chartObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '200px 0px' });
+}
+
+/**
+ * Render chart immediately if in viewport, otherwise defer to scroll.
+ */
+function lazyChart(el, id, fn) {
+  if (!el) { fn(); return; }
+  _initChartObserver();
+  const rect = el.getBoundingClientRect();
+  if (rect.top < window.innerHeight + 200 && rect.bottom > -200) { fn(); return; }
+  el.dataset.lazyChart = id;
+  _pendingCharts.set(id, fn);
+  _chartObserver.observe(el);
+}
+
+/**
+ * Schedule chart jobs for a tab.
+ * Active tab → IntersectionObserver lazy render.
+ * Hidden tab → defer until tab switch.
+ */
+function scheduleCharts(tab, jobs) {
+  /* Clean up previous pending for this tab */
+  _pendingCharts.forEach((_, id) => {
+    if (id.startsWith(tab + '_')) {
+      const el = document.querySelector(`[data-lazy-chart="${id}"]`);
+      if (el && _chartObserver) _chartObserver.unobserve(el);
+      _pendingCharts.delete(id);
+    }
+  });
+
+  if (tab === currentTab) {
+    jobs.forEach(job => {
+      const el = document.getElementById(job.id);
+      const container = el?.closest('.box') || el?.parentElement;
+      lazyChart(container, tab + '_' + job.id, job.fn);
+    });
+  } else {
+    _deferredCharts[tab] = jobs;
+  }
+}
+
+/** Flush deferred charts when a tab becomes visible. */
+function flushDeferredCharts(tab) {
+  const jobs = _deferredCharts[tab];
+  if (!jobs) return;
+  delete _deferredCharts[tab];
+  requestAnimationFrame(() => {
+    jobs.forEach(job => {
+      const el = document.getElementById(job.id);
+      const container = el?.closest('.box') || el?.parentElement;
+      lazyChart(container, tab + '_' + job.id, job.fn);
+    });
+  });
+}
+
 /* ── Computed style helper ── */
 function getCS(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
 
@@ -497,7 +571,11 @@ function timePillsHTML(id, handler) {
 function renderSparkline(navH, color) {
   dc('dpSpark');
   const canvas = document.getElementById('dpSpark'); if (!canvas) return;
-  const dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
+  let dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
+  if (dates.length > 300) {
+    const r = downsampleChart(dates, [{ label: '_', data: vals }], 200);
+    dates = r.labels; vals = r.datasets[0].data;
+  }
   CI['dpSpark'] = new Chart(canvas, {
     type: 'line',
     data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .3, pointRadius: 0, fill: true }] },
@@ -665,7 +743,11 @@ function renderBtDetailSpark(navH, color) {
   const w = container.offsetWidth || 800;
   canvas.style.width = w + 'px';
   canvas.style.height = '120px';
-  const dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
+  let dates = navH.map(h => h.date), vals = navH.map(h => h.nav);
+  if (dates.length > 300) {
+    const r = downsampleChart(dates, [{ label: '_', data: vals }], 200);
+    dates = r.labels; vals = r.datasets[0].data;
+  }
   CI['btDetailSpark'] = new Chart(canvas, {
     type: 'line',
     data: { labels: dates, datasets: [{ data: vals, borderColor: color, backgroundColor: color + '20', borderWidth: 2, tension: .3, pointRadius: 0, fill: true }] },

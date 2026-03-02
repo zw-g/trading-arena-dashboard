@@ -84,9 +84,11 @@ function renderPaper() {
   out.innerHTML = h;
   updateStaticText();
   updateScoreboard();
-  rPNav(keys, strats, cap);
-  rPSec(keys, strats);
   makeSortable('pLb');
+  scheduleCharts('paper', [
+    { id: 'pNavC', fn: () => rPNav(keys, strats, cap) },
+    { id: 'pSecC', fn: () => rPSec(keys, strats) },
+  ]);
   refreshCarouselDots();
 }
 
@@ -205,10 +207,12 @@ function renderBt() {
   out.innerHTML = h;
   updateStaticText();
   updateScoreboard();
-  rBRet(keys, strats, run);
-  rBHM(keys, strats);
-  renderComparisonTable(keys, strats, spy);
   makeSortable('bSt');
+  scheduleCharts('bt', [
+    { id: 'bRetC', fn: () => rBRet(keys, strats, run) },
+    { id: 'bHM', fn: () => rBHM(keys, strats) },
+    { id: 'cmpTableWrap', fn: () => renderComparisonTable(keys, strats, spy) },
+  ]);
   refreshCarouselDots();
 
   /* T24: Build all-trades virtual list */
