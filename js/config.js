@@ -174,8 +174,8 @@ const STRATEGY_META = {
 };
 
 /* ── Color maps (light & dark) ── */
-const CL = {A_masters:'#3b82f6',B_committee:'#8b5cf6',C_quant:'#10b981',D_llm:'#f59e0b',E_baseline:'#ec4899'};
-const CD = {A_masters:'#60a5fa',B_committee:'#a78bfa',C_quant:'#34d399',D_llm:'#fbbf24',E_baseline:'#f472b6'};
+const CL = {A_masters:'#3b82f6',B_committee:'#8b5cf6',C_quant:'#00c781',D_llm:'#f5a623',E_baseline:'#ec4899'};
+const CD = {A_masters:'#60a5fa',B_committee:'#a78bfa',C_quant:'#3dd68c',D_llm:'#ffc547',E_baseline:'#f472b6'};
 
 /* ── Color helper ── */
 function rc(k) {

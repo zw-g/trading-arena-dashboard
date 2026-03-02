@@ -6,18 +6,20 @@
 html {
   font-size: 15px;
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.55;
+  font-family: var(--font-sans);
+  line-height: var(--leading-relaxed);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
@@ -25,7 +27,7 @@ body {
    ANIMATIONS
    ═══════════════════════════════════════════════════════ */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -51,6 +53,14 @@ body {
 .neg  { color: var(--red); }
 .neut { color: var(--text-dim); }
 
+/* Tabular numbers — critical for financial data alignment */
+.num, .sc-nav, .sc-ret, .kpi-value, .tpnl, .sb-ret,
+.bt-metric-value, .bt-bench-val,
+td, .tl-td, .dp-desc {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
 /* ═══════════════════════════════════════════════════════
    LOADING / ERROR / EMPTY STATES
    ═══════════════════════════════════════════════════════ */
@@ -63,12 +73,12 @@ body {
 .ld::before {
   content: '';
   display: block;
-  width: 32px; height: 32px;
-  border: 3px solid var(--border);
+  width: 28px; height: 28px;
+  border: 2.5px solid var(--border);
   border-top-color: var(--brand);
   border-radius: 50%;
-  animation: spin .8s linear infinite;
-  margin: 0 auto 12px;
+  animation: spin .7s linear infinite;
+  margin: 0 auto 14px;
 }
 
 .err {
@@ -79,18 +89,19 @@ body {
   text-align: center;
   color: var(--red);
   margin: 20px 0;
+  font-weight: var(--weight-medium);
 }
 
 .empty {
   text-align: center;
-  padding: 28px 20px;
+  padding: 32px 20px;
   color: var(--text-dim);
-  font-size: .84rem;
+  font-size: var(--text-base);
 }
 .empty .ei {
-  font-size: 1.8rem;
-  margin-bottom: 6px;
-  opacity: .5;
+  font-size: 2rem;
+  margin-bottom: 8px;
+  opacity: .45;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -98,10 +109,11 @@ body {
    ═══════════════════════════════════════════════════════ */
 .ft {
   text-align: center;
-  padding: 18px;
-  font-size: .7rem;
+  padding: 20px;
+  font-size: var(--text-xs);
   color: var(--text-dim);
   border-top: 1px solid var(--border);
   margin-top: auto;
   transition: border-color var(--dur);
+  letter-spacing: 0.02em;
 }
