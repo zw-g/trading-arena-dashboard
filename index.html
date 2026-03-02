@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trading Arena — Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏟️</text></svg>">
+
+<!-- External libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/charts.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- Tooltip singleton -->
+<div class="stt" id="stt">
+  <div class="arr top" id="stArr"></div>
+  <div class="ttt"><span class="ttd" id="stDot"></span><span id="stTitle"></span></div>
+  <div class="ttdesc" id="stDesc"></div>
+  <div class="ttf" id="stFoot"></div>
+</div>
+
+<!-- Detail panel overlay -->
+<div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+
+<!-- Detail panel (Level 2 + 3) -->
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-head">
+    <span class="dp-dot" id="dpDot"></span>
+    <span class="dp-title" id="dpTitle"></span>
+    <span class="dp-ver" id="dpVer"></span>
+    <button class="dp-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
+</div>
+
+<!-- Header -->
+<header class="hdr">
+  <div class="hdr-logo"><span class="ico">🏟️</span><span class="txt"><b>Trading</b> Arena</span></div>
+  <div class="hdr-right">
+    <span class="upd" id="lastUpd"></span>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()" title="切换语言 / Switch language"><span id="langEn">EN</span><span class="lang-sep">/</span><span id="langZh">中</span></button>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+  </div>
+</header>
+
+<!-- Tabs -->
+<nav class="tabs-nav">
+  <button class="tab-btn on" data-t="paper" onclick="switchTab('paper')">📋 Paper Trading</button>
+  <button class="tab-btn" data-t="bt" onclick="switchTab('bt')">📊 Backtests</button>
+  <button class="tab-btn" data-t="live" onclick="switchTab('live')">🟢 Live Trading</button>
+</nav>
+
+<!-- Paper Trading -->
+<div class="pane on" id="p-paper">
+  <div class="sel"><label for="sSel">Session</label><select id="sSel" onchange="renderPaper()"></select></div>
+  <div id="paperOut"><div class="ld">Loading paper trading data…</div></div>
+</div>
+
+<!-- Backtests -->
+<div class="pane" id="p-bt">
+  <div class="sel"><label for="bSel">Run</label><select id="bSel" onchange="renderBt()"></select></div>
+  <div id="btOut"><div class="ld">Loading backtest data…</div></div>
+</div>
+
+<!-- Live -->
+<div class="pane" id="p-live">
+  <div class="cs-page">
+    <div class="pulse-ring"><span class="pi">🟢</span></div>
+    <h2 id="liveTitle">Live Trading — Coming Soon</h2>
+    <p id="liveMsg">Live trading will be enabled after paper trading validation.<br>Target: <strong>Alpaca API</strong> integration with real-time execution.</p>
+    <p id="liveDetail" style="font-size:.76rem;color:var(--text-dim)">The live dashboard will mirror Paper Trading with real-time P&L, positions, and execution logs.</p>
+    <div class="skel-grid"><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel tall"></div></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="ft" id="ftText">Trading Arena · Auto-updated every 120 s</footer>
+
+<!-- Application scripts (order matters: config → data → charts → ui → app) -->
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+{
+  "updated": "2026-03-01T00:43:32.163208",
+  "sessions": [
+    {
+      "id": "session_001",
+      "name": "S&P 500 Arena v1",
+      "start_date": "2026-03-02",
+      "status": "active",
+      "initial_capital": 10000,
+      "strategies": {
+        "A_masters": {
+          "meta": {
+            "version": "1.0",
+            "name": "Masters Vote",
+            "description": "4\u4f4d\u6295\u8d44\u5927\u5e08(Graham/Buffett/Druckenmiller/Burry)\u5404\u81ea\u72ec\u7acb\u5206\u6790\uff0c\u591a\u6570\u7968\u51b3\u5b9a\u4e70\u5356\u3002\u7f3a\u6570\u636e\u65f6\u5f03\u6743\u800c\u975e\u731c\u6d4b\u3002",
+            "description_en": "4 legendary investors (Graham/Buffett/Druckenmiller/Burry) each analyze independently, majority vote decides. Missing data \u2192 abstain, not guess.",
+            "type": "Multi-persona voting",
+            "methodology": "Each master receives enriched data (price, technicals, fundamentals with industry benchmarks, news sentiment) and responds with their investment thesis. Graham/Buffett: value metrics \u2014 P/E, D/E, margin of safety, Graham Number. Cathie Wood: innovation/disruption potential, TAM expansion, S-curve positioning. Druckenmiller: macro regime, momentum, institutional flows, risk/reward asymmetry. Burry: contrarian deep value, short interest, hidden catalysts.",
+            "methodology_cn": "\u6bcf\u4f4d\u5927\u5e08\u63a5\u6536\u4e30\u5bcc\u6570\u636e\uff08\u4ef7\u683c\u3001\u6280\u672f\u9762\u3001\u57fa\u672c\u9762\u542b\u884c\u4e1a\u57fa\u51c6\u3001\u65b0\u95fb\u60c5\u7eea\uff09\u3002Graham/Buffett\uff1a\u4ef7\u503c\u6307\u6807 \u2014 P/E\u3001D/E\u3001\u5b89\u5168\u8fb9\u9645\u3001Graham Number\u3002Cathie Wood\uff1a\u521b\u65b0/\u98a0\u8986\u6f5c\u529b\u3001TAM\u6269\u5f20\u3001S-curve\u5b9a\u4f4d\u3002Druckenmiller\uff1a\u5b8f\u89c2regime\u3001\u52a8\u91cf\u3001\u673a\u6784\u8d44\u91d1\u6d41\u3001\u98ce\u9669/\u56de\u62a5\u4e0d\u5bf9\u79f0\u3002Burry\uff1a\u9006\u5411\u6df1\u5ea6\u4ef7\u503c\u3001\u7a7a\u5934\u5229\u7387\u3001\u9690\u85cf\u50ac\u5316\u5242\u3002",
+            "ai_mode": "live/paper: Claude Opus 4 | backtest: Claude Haiku | fallback: rule-based scoring",
+            "cost_formula": "4 LLM calls/stock \u00d7 N stocks/day",
+            "signals_per_day": "~50 stocks (top from C+E screener)",
+            "added_date": "2026-03-02",
+            "data_used": "Technicals + Fundamentals",
+            "cost": "$0/day"
+          },
+          "nav_history": [],
+          "current": {
+            "nav": 10000,
+            "return_pct": 0,
+            "positions": 0,
+            "trades": 0,
+            "max_drawdown": 0,
+            "cash": 10000
+          },
+          "trades": [],
+          "positions": {},
+          "win_rate": 0,
+          "sharpe": 0
+        },
+        "B_committee": {
+          "meta": {
+            "version": "1.0",
+            "name": "Investment Committee",
+            "description": "\u6a21\u62df\u673a\u6784\u6295\u59d4\u4f1a\u6d41\u7a0b\uff1a\u5e02\u573a\u8bc4\u4f30\u2192\u57fa\u672c\u9762\u2192\u6280\u672f\u9762\u2192\u98ce\u9669\u2192\u5907\u5fd8\u5f55\u3002VIX\u611f\u77e5\uff0c\u6709\u5386\u53f2\u5907\u5fd8\u5f55\u8bb0\u5fc6\u3002",
+            "description_en": "Simulates institutional IC process: Market Assessment \u2192 Fundamentals \u2192 Technicals \u2192 Risk \u2192 Memo. VIX-aware with historical memo memory.",
+            "type": "Process-driven",
+            "methodology": "Round 1 (Research Analyst): Deep fundamental analysis with Porter's Five Forces, technical pattern recognition, industry comparison vs sector benchmarks. Round 2 (Risk Manager): Identifies red flags, calculates position sizing via Kelly Criterion, evaluates downside scenarios. Round 3 (Portfolio Manager): Weighs analyst optimism vs risk concerns, considers portfolio concentration and correlation, makes final signal with conviction level. VIX regime detection adjusts overall risk tolerance.",
+            "methodology_cn": "\u7b2c1\u8f6e\uff08Research Analyst\uff09\uff1a\u6df1\u5ea6\u57fa\u672c\u9762\u5206\u6790 + Porter\u4e94\u529b\u6a21\u578b + \u6280\u672f\u5f62\u6001\u8bc6\u522b + \u884c\u4e1a\u5bf9\u6bd4\u3002\u7b2c2\u8f6e\uff08Risk Manager\uff09\uff1a\u7ea2\u65d7\u68c0\u6d4b + Kelly Criterion\u4ed3\u4f4d\u8ba1\u7b97 + \u4e0b\u884c\u60c5\u666f\u8bc4\u4f30\u3002\u7b2c3\u8f6e\uff08Portfolio Manager\uff09\uff1a\u7efc\u5408\u5206\u6790\u5e08\u4e50\u89c2 vs \u98ce\u63a7\u62c5\u5fe7 + \u7ec4\u5408\u96c6\u4e2d\u5ea6\u548c\u76f8\u5173\u6027 + \u6700\u7ec8\u4fe1\u53f7\u548c\u4fe1\u5fc3\u6c34\u5e73\u3002VIX regime \u68c0\u6d4b\u8c03\u6574\u6574\u4f53\u98ce\u9669\u5bb9\u5fcd\u5ea6\u3002",
+            "ai_mode": "live/paper: Claude Opus 4 | backtest: Claude Haiku | fallback: weighted scoring",
+            "cost_formula": "3 LLM calls/stock \u00d7 N stocks/day",
+            "signals_per_day": "~50 stocks (top from C+E screener)",
+            "added_date": "2026-03-02",
+            "data_used": "All data + VIX + Memos",
+            "cost": "$0/day"
+          },
+          "nav_history": [],
+          "current": {
+            "nav": 10000,
+            "return_pct": 0,
+            "positions": 0,
+            "trades": 0,
+            "max_drawdown": 0,
+            "cash": 10000
+          },
+          "trades": [],
+          "positions": {},
+          "win_rate": 0,
+          "sharpe": 0
+        },
+        "C_quant": {
+          "meta": {
+            "version": "1.0",
+            "name": "Quant Model",
+            "description": "\u7eaf\u6570\u5b66\u91cf\u5316\u6a21\u578b\u3002\u6839\u636eVIX\u6050\u614c\u6307\u6570\u81ea\u52a8\u5207\u6362\u5e02\u573aregime\uff0c\u8c03\u6574\u56db\u7ef4\u6743\u91cd\uff1a\u8d8b\u52bf/\u5747\u503c\u56de\u5f52/\u52a8\u91cf/\u6ce2\u52a8\u7387\u3002",
+            "description_en": "Pure mathematical model. Auto-switches market regime based on VIX, adapts weights across 4 dimensions: Trend/Mean Reversion/Momentum/Volatility.",
+            "type": "Systematic quantitative",
+            "methodology": "Four scoring dimensions with regime-dependent weights: (1) Trend: MA20/50/200 crossovers and relative position. (2) Mean Reversion: Bollinger Band position + RSI extremes (oversold < 30, overbought > 70). (3) Momentum: 5-day price change rate + volume surge detection. (4) Volatility: VIX regime awareness. Bull regime \u2192 heavier trend/momentum weights. Bear regime \u2192 heavier mean-reversion weights. Signal threshold: \u00b115 from neutral. Max confidence ~63%.",
+            "methodology_cn": "\u56db\u7ef4\u8bc4\u5206\uff08\u6743\u91cd\u968fregime\u53d8\u5316\uff09\uff1a(1) \u8d8b\u52bf\uff1aMA20/50/200\u4ea4\u53c9\u548c\u76f8\u5bf9\u4f4d\u7f6e\u3002(2) \u5747\u503c\u56de\u5f52\uff1a\u5e03\u6797\u5e26\u4f4d\u7f6e + RSI\u6781\u503c\uff08\u8d85\u5356<30, \u8d85\u4e70>70\uff09\u3002(3) \u52a8\u91cf\uff1a5\u65e5\u6da8\u8dcc\u5e45 + \u6210\u4ea4\u91cf\u7a81\u589e\u68c0\u6d4b\u3002(4) \u6ce2\u52a8\u7387\uff1aVIX regime\u611f\u77e5\u3002\u725b\u5e02 \u2192 \u8d8b\u52bf/\u52a8\u91cf\u6743\u91cd\u5927\u3002\u718a\u5e02 \u2192 \u5747\u503c\u56de\u5f52\u6743\u91cd\u5927\u3002\u4fe1\u53f7\u9608\u503c\uff1a\u4e2d\u6027\u00b115\u3002\u6700\u5927\u4fe1\u5fc3\u5ea6~63%\u3002",
+            "ai_mode": "Pure rules \u2014 no LLM, no API cost",
+            "cost_formula": "$0/day",
+            "signals_per_day": "All 499 stocks (free screener, feeds A/B/D)",
+            "added_date": "2026-03-02",
+            "data_used": "Technicals + VIX",
+            "cost": "$0/day"
+          },
+          "nav_history": [],
+          "current": {
+            "nav": 10000,
+            "return_pct": 0,
+            "positions": 0,
+            "trades": 0,
+            "max_drawdown": 0,
+            "cash": 10000
+          },
+          "trades": [],
+          "positions": {},
+          "win_rate": 0,
+          "sharpe": 0
+        },
+        "D_llm": {
+          "meta": {
+            "version": "2.0",
+            "name": "LLM Debate",
+            "description": "AI\u8fa9\u8bba\u5f15\u64ce(Claude Opus 4.6)\u3002Bull/Bear\u4e24\u4e2aAI\u5bf9\u8fa9\uff0cJudge\u7efc\u5408\u88c1\u51b3\u3002\u6bcf\u5929\u4ece500\u53ea\u4e2d\u900950\u53ea\u6df1\u5ea6\u5206\u6790\uff0c\u7ed3\u5408\u65b0\u95fb\u60c5\u7eea+\u5386\u53f2\u8bb0\u5fc6\u3002",
+            "description_en": "AI debate engine (Claude Opus 4.6). Bull/Bear agents debate, Judge decides. Selects top 50 from 500 for deep analysis daily, with news sentiment + historical memory.",
+            "type": "LLM reasoning",
+            "methodology": "Step 1 (Bull Agent): Builds the strongest possible bullish case \u2014 growth catalysts, positive technicals, favorable macro. Step 2 (Bear Agent): Sees Bull's argument and constructs strongest bearish counter \u2014 overvaluation risks, negative trends, macro headwinds. Step 3 (Judge): Reviews both arguments, applies Bayesian reasoning to weigh evidence strength, calculates posterior probability, renders final signal with calibrated confidence. News sentiment from rule-based analysis feeds into all three agents' context.",
+            "methodology_cn": "\u7b2c1\u6b65\uff08Bull Agent\uff09\uff1a\u6784\u5efa\u6700\u5f3a\u505a\u591a\u8bba\u636e \u2014 \u589e\u957f\u50ac\u5316\u5242\u3001\u6b63\u9762\u6280\u672f\u4fe1\u53f7\u3001\u6709\u5229\u5b8f\u89c2\u3002\u7b2c2\u6b65\uff08Bear Agent\uff09\uff1a\u770b\u5230\u591a\u65b9\u8bba\u636e\u540e\u6784\u5efa\u6700\u5f3a\u505a\u7a7a\u53cd\u9a73 \u2014 \u4f30\u503c\u8fc7\u9ad8\u98ce\u9669\u3001\u8d1f\u9762\u8d8b\u52bf\u3001\u5b8f\u89c2\u9006\u98ce\u3002\u7b2c3\u6b65\uff08Judge\uff09\uff1a\u5ba1\u9605\u53cc\u65b9\u8bba\u636e\uff0c\u7528 Bayesian reasoning \u8bc4\u4f30\u8bc1\u636e\u5f3a\u5ea6\uff0c\u8ba1\u7b97\u540e\u9a8c\u6982\u7387\uff0c\u7ed9\u51fa\u6821\u51c6\u540e\u7684\u4fe1\u5fc3\u5ea6\u548c\u6700\u7ec8\u4fe1\u53f7\u3002\u65b0\u95fb\u60c5\u7eea\uff08\u89c4\u5219\u5206\u6790\uff09\u8f93\u5165\u4e09\u4e2a agent \u7684 context\u3002",
+            "ai_mode": "live/paper: Claude Opus 4 | backtest: Claude Haiku | fallback: weighted scoring",
+            "cost_formula": "3 LLM calls/stock \u00d7 N stocks/day",
+            "signals_per_day": "~50 stocks (top from C+E screener)",
+            "added_date": "2026-03-02",
+            "data_used": "Everything + News + Memory",
+            "cost": "~$10/day"
+          },
+          "nav_history": [],
+          "current": {
+            "nav": 10000,
+            "return_pct": 0,
+            "positions": 0,
+            "trades": 0,
+            "max_drawdown": 0,
+            "cash": 10000
+          },
+          "trades": [],
+          "positions": {},
+          "win_rate": 0,
+          "sharpe": 0
+        },
+        "E_baseline": {
+          "meta": {
+            "version": "1.0",
+            "name": "Baseline",
+            "description": "\u6700\u7b80\u5355\u7684\u7b56\u7565\uff1a\u5747\u7ebf\u91d1\u53c9/\u6b7b\u53c9 + RSI\u8d85\u4e70\u8d85\u5356\u3002\u4f5c\u4e3a\u5bf9\u7167\u7ec4\u2014\u2014\u5982\u679c\u590d\u6742\u7b56\u7565\u8d62\u4e0d\u4e86\u8fd9\u4e2a\uff0c\u590d\u6742\u5c31\u6ca1\u4ef7\u503c\u3002",
+            "description_en": "Simplest strategy: MA Golden/Death Cross + RSI. Control group \u2014 if complex strategies can't beat this, complexity has no value.",
+            "type": "Simple rules",
+            "methodology": "Golden Cross (MA50 > MA200) = bullish signal. Death Cross (MA50 < MA200) = bearish signal. RSI tiers adjust confidence: RSI < 30 \u2192 high bullish confidence boost, RSI 30-40 \u2192 moderate boost, RSI 60-70 \u2192 moderate bearish, RSI > 70 \u2192 high bearish confidence. No fundamentals, no news, no sector analysis, no AI. Pure price + volume.",
+            "methodology_cn": "\u91d1\u53c9\uff08MA50 > MA200\uff09= \u770b\u591a\u4fe1\u53f7\u3002\u6b7b\u53c9\uff08MA50 < MA200\uff09= \u770b\u7a7a\u4fe1\u53f7\u3002RSI \u5206\u7ea7\u8c03\u6574\u4fe1\u5fc3\u5ea6\uff1aRSI < 30 \u2192 \u9ad8\u770b\u591a\u52a0\u6210\uff0cRSI 30-40 \u2192 \u4e2d\u7b49\u52a0\u6210\uff0cRSI 60-70 \u2192 \u4e2d\u7b49\u770b\u7a7a\uff0cRSI > 70 \u2192 \u9ad8\u770b\u7a7a\u52a0\u6210\u3002\u4e0d\u770b\u57fa\u672c\u9762\uff0c\u4e0d\u770b\u65b0\u95fb\uff0c\u4e0d\u770b\u884c\u4e1a\uff0c\u4e0d\u7528 AI\u3002\u7eaf\u4ef7\u683c + \u6210\u4ea4\u91cf\u3002",
+            "ai_mode": "Pure rules \u2014 no LLM, no API cost",
+            "cost_formula": "$0/day",
+            "signals_per_day": "All 499 stocks (free screener, feeds A/B/D)",
+            "added_date": "2026-03-02",
+            "data_used": "MA50, MA200, RSI only",
+            "cost": "$0/day"
+          },
+          "nav_history": [],
+          "current": {
+            "nav": 10000,
+            "return_pct": 0,
+            "positions": 0,
+            "trades": 0,
+            "max_drawdown": 0,
+            "cash": 10000
+          },
+          "trades": [],
+          "positions": {},
+          "win_rate": 0,
+          "sharpe": 0
+        }
+      }
+    }
+  ]
+}

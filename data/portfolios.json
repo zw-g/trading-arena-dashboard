@@ -1,0 +1,80 @@
+{
+  "updated": "2026-02-28T17:45:37",
+  "strategies": {
+    "A_masters": {
+      "nav_history": [],
+      "current": {
+        "nav": 10000.0,
+        "return_pct": 0.0,
+        "positions": 0,
+        "trades": 0,
+        "max_drawdown": 0.0,
+        "cash": 10000.0
+      },
+      "trades": [],
+      "positions": {},
+      "win_rate": 0.0,
+      "sharpe": 0.0
+    },
+    "B_committee": {
+      "nav_history": [],
+      "current": {
+        "nav": 10000.0,
+        "return_pct": 0.0,
+        "positions": 0,
+        "trades": 0,
+        "max_drawdown": 0.0,
+        "cash": 10000.0
+      },
+      "trades": [],
+      "positions": {},
+      "win_rate": 0.0,
+      "sharpe": 0.0
+    },
+    "C_quant": {
+      "nav_history": [],
+      "current": {
+        "nav": 10000.0,
+        "return_pct": 0.0,
+        "positions": 0,
+        "trades": 0,
+        "max_drawdown": 0.0,
+        "cash": 10000.0
+      },
+      "trades": [],
+      "positions": {},
+      "win_rate": 0.0,
+      "sharpe": 0.0
+    },
+    "D_llm": {
+      "nav_history": [],
+      "current": {
+        "nav": 10000.0,
+        "return_pct": 0.0,
+        "positions": 0,
+        "trades": 0,
+        "max_drawdown": 0.0,
+        "cash": 10000.0
+      },
+      "trades": [],
+      "positions": {},
+      "win_rate": 0.0,
+      "sharpe": 0.0
+    },
+    "E_baseline": {
+      "nav_history": [],
+      "current": {
+        "nav": 10000.0,
+        "return_pct": 0.0,
+        "positions": 0,
+        "trades": 0,
+        "max_drawdown": 0.0,
+        "cash": 10000.0
+      },
+      "trades": [],
+      "positions": {},
+      "win_rate": 0.0,
+      "sharpe": 0.0
+    }
+  }
+}

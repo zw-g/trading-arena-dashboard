@@ -1,0 +1,65 @@
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — Tablet
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .sg { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .twocol { grid-template-columns: 1fr; }
+  .dw { max-width: 200px; }
+  .skel-grid { grid-template-columns: 1fr 1fr; }
+  .detail-panel { width: 400px; }
+  .bt-top-trades { grid-template-columns: 1fr 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — Mobile
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .hdr { padding: 12px 16px; gap: 10px; }
+  .hdr-logo .txt { font-size: 1rem; }
+  .hdr .upd { display: none; }
+  .tabs-nav { padding: 8px 16px; gap: 4px; }
+  .tab-btn { padding: 6px 12px; font-size: .8rem; }
+  .pane { padding: 16px 16px 40px; }
+  .sg { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .sc { padding: 14px 14px; }
+  .sc-nav { font-size: 1.3rem; }
+  .box { padding: 14px; margin-bottom: 16px; }
+  .box canvas { max-height: 240px; }
+  .sel select { min-width: 0; width: 100%; }
+  .sel { flex-direction: column; align-items: stretch; gap: 6px; }
+  .twocol { grid-template-columns: 1fr; gap: 16px; }
+  .hmob { display: none; }
+  .hmg { font-size: .66rem; }
+  .hmc { padding: 5px 4px; min-width: 42px; }
+  .hml { font-size: .66rem; padding-right: 4px; }
+
+  /* Panel → bottom sheet */
+  .detail-panel {
+    top: auto; right: 0; bottom: 0; left: 0; width: 100%;
+    max-height: 92vh; border-radius: var(--radius) var(--radius) 0 0;
+    transform: translateY(100%); border-left: none; border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 24px rgba(0,0,0,.1);
+  }
+  .detail-panel.open { transform: translateY(0); }
+  .dp-head { padding: 14px 16px; }
+  .dp-body { padding: 16px; }
+  .bt-top-trades { grid-template-columns: 1fr; }
+  .bt-metrics { grid-template-columns: repeat(3, 1fr); }
+  .bt-expand-inner { padding: 16px; }
+  .bt-header { padding: 12px 14px; gap: 8px; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE — Small phone
+   ═══════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .sg { grid-template-columns: 1fr; }
+  .sc-sub span::after { display: none; }
+  .sc-sub { flex-direction: column; gap: 1px; }
+  .tab-btn { padding: 5px 10px; font-size: .76rem; }
+  .bt-metrics { grid-template-columns: repeat(2, 1fr); }
+  .bt-info-row { flex-direction: column; }
+  .bt-info-item { min-width: 0; }
+  .bt-bench { flex-direction: column; gap: 8px; align-items: flex-start; }
+}

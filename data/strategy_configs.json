@@ -1,0 +1,319 @@
+{
+  "A_masters": {
+    "philosophy": "Graham/Buffett \u662f\u957f\u671f\u4ef7\u503c\u6295\u8d44\u8005\u2014\u2014\u4e0d\u9891\u7e41\u4ea4\u6613\uff0c\u4e70\u5165\u540e\u6301\u6709\u7b49\u5f85\u4ef7\u503c\u56de\u5f52\u3002Cathie Wood \u770b\u7684\u662f 5-10 \u5e74\u521b\u65b0\u5468\u671f\u3002Druckenmiller \u770b\u5b8f\u89c2\u5927\u8d8b\u52bf\u3002Burry \u505a\u9006\u5411\uff0c\u7b49\u6781\u7aef\u4fe1\u53f7\u3002\u8fd9\u4e9b\u4eba\u4e0d\u4f1a\u6bcf 15 \u5206\u949f\u770b\u76d8\u3002",
+    "schedule": {
+      "morning_analysis": {
+        "frequency": "daily",
+        "time": "06:15",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6bcf\u5929\u5f00\u76d8\u524d\uff0c4 \u4f4d\u5927\u5e08\u5404\u81ea\u5bf9\u5019\u9009\u80a1\u7968\u505a\u6df1\u5ea6\u5206\u6790\u5e76\u6295\u7968\u3002\u8fd9\u662f\u552f\u4e00\u4ea7\u751f\u4e70\u5356\u4fe1\u53f7\u7684\u73af\u8282\u3002",
+        "description_cn": "Pre-market. Each master analyzes top candidates, votes independently. This is where buy/sell signals are generated."
+      },
+      "end_of_day_review": {
+        "frequency": "daily",
+        "time": "13:15",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6536\u76d8\u540e\u56de\u987e\u5f53\u5929\u6267\u884c\u60c5\u51b5\u3002\u5bf9\u6bd4\u4fe1\u53f7 vs \u5b9e\u9645\u4ef7\u683c\u8d70\u52bf\uff0c\u8bb0\u5f55\u5230 memo \u4e2d\u4f9b\u7b2c\u4e8c\u5929\u53c2\u8003\u3002",
+        "description_cn": "Post-close review. Compare signals vs actual price action. Log insights for next day's analysis."
+      },
+      "weekly_portfolio_review": {
+        "frequency": "weekly",
+        "day": "friday",
+        "time": "13:30",
+        "description": "\u6bcf\u5468\u4e94\u6536\u76d8\u540e\u505a\u7ec4\u5408\u5ba1\u89c6\uff1a\u4ed3\u4f4d\u96c6\u4e2d\u5ea6\u3001\u677f\u5757\u504f\u5dee\u3001\u662f\u5426\u504f\u79bb\u4e86\u4ef7\u503c\u6295\u8d44\u7eaa\u5f8b\u3002Graham \u4f1a\u95ee\uff1a\u8fd9\u4e9b\u6301\u4ed3\u8fd8\u5728\u5b89\u5168\u8fb9\u9645\u5185\u5417\uff1f",
+        "description_cn": "Friday post-close: Portfolio review. Check position concentration, sector drift. Graham asks: still within margin of safety?"
+      }
+    },
+    "risk_management": {
+      "_philosophy": "\u4ef7\u503c\u6295\u8d44\u8005\u4e0d\u7528\u4f20\u7edf\u7684\u767e\u5206\u6bd4\u6b62\u635f\u2014\u2014Graham \u8ba4\u4e3a\u5982\u679c\u57fa\u672c\u9762\u6ca1\u53d8\uff0c\u4ef7\u683c\u4e0b\u8dcc\u662f\u4e70\u5165\u673a\u4f1a\uff0c\u4e0d\u662f\u5356\u51fa\u7406\u7531\u3002\u4f46\u6211\u4eec\u9700\u8981\u4fdd\u62a4\u8d44\u672c\uff0c\u6240\u4ee5\u7528 '\u57fa\u672c\u9762\u6076\u5316\u6b62\u635f' \u800c\u975e\u7eaf\u4ef7\u683c\u6b62\u635f\u3002",
+      "position_exit_rules": [
+        {
+          "name": "fundamental_deterioration",
+          "trigger": "\u57fa\u672c\u9762\u6307\u6807\u6076\u5316\uff08ROE \u8dcc\u7834\u884c\u4e1a\u5e73\u5747\u3001\u503a\u52a1\u5927\u5e45\u4e0a\u5347\u3001\u8fde\u7eed\u4e24\u5b63\u8425\u6536\u4e0b\u6ed1\uff09",
+          "action": "full_exit",
+          "description": "\u4ef7\u503c\u6295\u8d44\u7684\u6838\u5fc3\uff1a\u4e70\u5165\u57fa\u4e8e\u57fa\u672c\u9762\uff0c\u5356\u51fa\u4e5f\u5e94\u8be5\u57fa\u4e8e\u57fa\u672c\u9762\u3002\u4e0d\u56e0\u4e3a\u4ef7\u683c\u8dcc\u5c31\u8dd1\u3002"
+        },
+        {
+          "name": "capital_protection_stop",
+          "trigger_pct": -0.15,
+          "action": "full_exit",
+          "description": "\u7edd\u5bf9\u6b62\u635f\u7ebf -15%\u3002\u5373\u4f7f\u662f Graham \u4e5f\u4e0d\u4f1a\u65e0\u9650\u6301\u6709\u4e8f\u635f\u2014\u2014\u5982\u679c\u8dcc\u8d85\u8fc7 15%\uff0c\u5f88\u53ef\u80fd\u662f\u4f60\u7684\u5206\u6790\u9519\u4e86\uff0c\u800c\u975e\u5e02\u573a\u9519\u4e86\u3002"
+        },
+        {
+          "name": "overvaluation_trim",
+          "trigger": "PE > \u884c\u4e1a\u5e73\u5747 2\u500d \u6216 Graham Number << \u73b0\u4ef7",
+          "action": "trim_half",
+          "description": "\u5f53\u4f30\u503c\u5927\u5e45\u8d85\u8fc7\u5185\u5728\u4ef7\u503c\u65f6\uff0c\u51cf\u534a\u4ed3\u4f4d\u3002Graham: '\u4ee5\u8d85\u8fc7\u5185\u5728\u4ef7\u503c\u7684\u4ef7\u683c\u6301\u6709\u662f\u6295\u673a\uff0c\u4e0d\u662f\u6295\u8d44\u3002'"
+        },
+        {
+          "name": "conviction_scale",
+          "trigger": "\u4ef7\u683c\u8dcc\u5165\u5b89\u5168\u8fb9\u9645\u66f4\u6df1\u5904\uff0c\u4e14\u57fa\u672c\u9762\u672a\u53d8",
+          "action": "add_position",
+          "description": "Buffett: 'Be fearful when others are greedy, be greedy when others are fearful.' \u5982\u679c\u57fa\u672c\u9762\u597d\u4f46\u4ef7\u683c\u8dcc\u4e86\uff0c\u52a0\u4ed3\u3002"
+        }
+      ],
+      "position_sizing": {
+        "max_single_position_pct": 0.15,
+        "min_cash_reserve_pct": 0.2,
+        "max_sector_pct": 0.35,
+        "sizing_method": "conviction_weighted",
+        "description": "\u4ed3\u4f4d\u5927\u5c0f\u7531\u5927\u5e08\u6295\u7968\u4fe1\u5fc3\u5ea6\u51b3\u5b9a\u30024/4 \u4e00\u81f4\u770b\u591a \u2192 \u6ee1\u4ed3\u914d\u7f6e\u30023/4 \u2192 2/3 \u4ed3\u4f4d\u3002\u96c6\u4e2d\u6295\u8d44\u4f46\u4e0d all-in\u3002"
+      },
+      "min_confidence": 55
+    }
+  },
+  "B_committee": {
+    "philosophy": "\u6a21\u62df\u771f\u5b9e\u7684\u673a\u6784\u6295\u59d4\u4f1a\u3002\u73b0\u5b9e\u4e2d\uff0cIC \u901a\u5e38\u6bcf\u5468\u5f00\u4e00\u6b21\u4f1a\u505a\u65b0\u6295\u8d44\u51b3\u7b56\uff0c\u4f46 Risk Manager \u6bcf\u5929\u76d1\u63a7\u6301\u4ed3\u3002\u5173\u952e\u533a\u522b\uff1a\u5206\u6790\u5e08\u662f weekly deep dive\uff0c\u98ce\u63a7\u662f daily watch\u3002",
+    "schedule": {
+      "daily_risk_scan": {
+        "frequency": "daily",
+        "time": "06:15",
+        "timezone": "America/Los_Angeles",
+        "description": "Risk Manager \u6bcf\u5929\u65e9\u4e0a\u626b\u63cf\u6301\u4ed3\uff1a\u68c0\u67e5\u9694\u591c\u65b0\u95fb\u3001\u4ef7\u683c\u53d8\u5316\u3001\u662f\u5426\u89e6\u53d1\u4efb\u4f55 red flag\u3002\u5982\u679c\u89e6\u53d1 \u2192 \u7d27\u6025\u5356\u51fa\u3002\u5426\u5219\u4e0d\u505a\u4ea4\u6613\u3002",
+        "description_cn": "Daily morning risk scan. Risk Manager checks overnight news, price changes, red flags. If triggered \u2192 emergency exit. Otherwise no action."
+      },
+      "ic_meeting": {
+        "frequency": "daily",
+        "time": "06:30",
+        "timezone": "America/Los_Angeles",
+        "description": "\u5b8c\u6574 IC \u6d41\u7a0b\uff1aAnalyst \u2192 Risk Manager \u2192 PM\u3002\u4ea7\u751f\u65b0\u7684\u4e70\u5165/\u5356\u51fa\u4fe1\u53f7\u3002\u5728\u771f\u5b9e\u673a\u6784\u4e2d\u901a\u5e38\u662f weekly\uff0c\u4f46\u56e0\u4e3a\u6211\u4eec\u662f AI + paper trading\uff0c\u6bcf\u5929\u8dd1\u4e00\u6b21\u4ee5\u83b7\u53d6\u66f4\u591a\u6570\u636e\u3002",
+        "description_cn": "Full IC process: Analyst \u2192 Risk Manager \u2192 PM. Generates new signals. Real ICs meet weekly, but we run daily for more data."
+      },
+      "quarterly_strategy_review": {
+        "frequency": "monthly",
+        "description": "\u6bcf\u6708\u5ba1\u89c6\u6574\u4f53\u7b56\u7565\u8868\u73b0\uff1awin rate\u3001Sharpe \u8d8b\u52bf\u3001\u662f\u5426\u9700\u8981\u8c03\u6574 risk tolerance\u3002PM \u505a\u6700\u7ec8\u51b3\u5b9a\u3002",
+        "description_cn": "Monthly strategy performance review. PM evaluates win rate trend, Sharpe trajectory, risk tolerance adjustments."
+      }
+    },
+    "risk_management": {
+      "_philosophy": "IC \u6d41\u7a0b\u672c\u8eab\u5c31\u5305\u542b\u98ce\u63a7\uff08Risk Manager \u662f\u7b2c\u4e8c\u8f6e\uff09\u3002\u6240\u4ee5\u5916\u90e8\u98ce\u63a7\u89c4\u5219\u66f4\u50cf\u662f 'circuit breaker'\u2014\u2014\u6781\u7aef\u60c5\u51b5\u4e0b\u7684\u4fdd\u62a4\u3002\u65e5\u5e38\u98ce\u63a7\u7531 Risk Manager agent \u5728 IC \u6d41\u7a0b\u5185\u51b3\u5b9a\u3002",
+      "position_exit_rules": [
+        {
+          "name": "risk_manager_veto",
+          "trigger": "Risk Manager \u5728 IC \u4e2d\u6295\u53cd\u5bf9\u7968 + \u68c0\u6d4b\u5230 red flags",
+          "action": "reduce_or_exit",
+          "description": "IC \u6d41\u7a0b\u5185\u7684\u98ce\u63a7\u3002Risk Manager \u6709\u5426\u51b3\u6743\u2014\u2014\u5982\u679c\u68c0\u6d4b\u5230\u4e25\u91cd red flag\uff08\u5982\u503a\u52a1\u87ba\u65cb\u3001\u8425\u6536\u5d29\u584c\uff09\uff0c\u5373\u4f7f Analyst \u770b\u591a\u4e5f\u53ef\u4ee5\u5426\u51b3\u3002"
+        },
+        {
+          "name": "circuit_breaker_stop",
+          "trigger_pct": -0.1,
+          "action": "full_exit",
+          "description": "Circuit breaker: -10% \u5f3a\u5236\u6b62\u635f\u3002\u6bd4 A_masters \u66f4\u7d27\uff0c\u56e0\u4e3a\u673a\u6784\u6295\u8d44\u8005\u5bf9\u4e8f\u635f\u7684\u5bb9\u5fcd\u5ea6\u66f4\u4f4e\uff08\u9700\u8981\u5411 LP \u4ea4\u4ee3\uff09\u3002"
+        },
+        {
+          "name": "profit_lock",
+          "trigger_pct": 0.2,
+          "action": "trim_half",
+          "description": "\u76c8\u5229 20% \u65f6\u51cf\u534a\u9501\u5b9a\u5229\u6da6\u3002\u673a\u6784\u6295\u8d44\u8005\u503e\u5411\u4e8e '\u89c4\u5f8b\u5730\u6536\u5272'\u3002"
+        },
+        {
+          "name": "trailing_stop",
+          "trigger_pct": 0.05,
+          "from": "peak",
+          "action": "full_exit",
+          "description": "\u4ece\u6700\u9ad8\u70b9\u56de\u64a4 5% \u6b62\u635f\uff08\u53ea\u5728\u76c8\u5229\u65f6\u89e6\u53d1\uff09\u3002\u4fdd\u62a4\u5df2\u6709\u76c8\u5229\uff0c\u9632\u6b62 paper gain \u53d8 real loss\u3002"
+        }
+      ],
+      "position_sizing": {
+        "max_single_position_pct": 0.12,
+        "min_cash_reserve_pct": 0.25,
+        "max_sector_pct": 0.3,
+        "sizing_method": "risk_adjusted",
+        "description": "\u4ed3\u4f4d\u7531 Risk Manager \u5efa\u8bae\u7684 Kelly Criterion \u8ba1\u7b97\u3002\u66f4\u4fdd\u5b88\uff1a\u6700\u9ad8 12% \u5355\u4ed3\uff0c25% \u73b0\u91d1\u50a8\u5907\uff08\u673a\u6784\u6807\u51c6\u6bd4\u4e2a\u4eba\u6295\u8d44\u8005\u66f4\u4fdd\u5b88\uff09\u3002"
+      },
+      "min_confidence": 65
+    }
+  },
+  "C_quant": {
+    "philosophy": "\u91cf\u5316\u6a21\u578b\u662f\u7eaf\u6570\u5b66\u2014\u2014\u6ca1\u6709\u60c5\u611f\uff0c\u6ca1\u6709\u53d9\u4e8b\u3002\u5b83\u5e94\u8be5 react fast to technical signals\u3002Renaissance Technologies \u7684 Medallion Fund \u6bcf\u79d2\u505a\u6210\u5343\u4e0a\u4e07\u7684\u51b3\u7b56\u3002\u6211\u4eec\u6ca1\u90a3\u4e48\u5feb\uff0c\u4f46\u91cf\u5316\u7684\u6838\u5fc3\u662f\uff1a\u4fe1\u53f7\u51fa\u73b0\u5c31\u6267\u884c\uff0c\u4e0d\u72b9\u8c6b\u3002",
+    "schedule": {
+      "signal_generation": {
+        "frequency": "30min",
+        "market_hours_only": true,
+        "description": "\u6bcf 30 \u5206\u949f\u91cd\u65b0\u8ba1\u7b97\u6240\u6709\u6280\u672f\u6307\u6807\u3002\u91cf\u5316\u7b56\u7565\u7684\u4f18\u52bf\u662f\u8ba1\u7b97\u6210\u672c\u4e3a\u96f6\u2014\u2014\u53ef\u4ee5\u9ad8\u9891\u89c2\u5bdf\u3002\u68c0\u6d4b regime \u53d8\u5316\u3001\u5747\u503c\u56de\u5f52\u673a\u4f1a\u3001\u52a8\u91cf\u7a81\u7834\u3002",
+        "description_cn": "Recalculate all technicals every 30 min. Zero cost computation. Detect regime shifts, mean reversion, momentum breakouts."
+      },
+      "regime_check": {
+        "frequency": "1h",
+        "market_hours_only": true,
+        "description": "\u6bcf\u5c0f\u65f6\u68c0\u67e5 VIX \u662f\u5426 regime \u8f6c\u6362\uff08Bull \u2192 Sideways \u2192 Bear\uff09\u3002Regime \u53d8\u5316\u4f1a\u6539\u53d8\u56db\u7ef4\u6743\u91cd\u5206\u914d\uff0c\u5f71\u54cd\u6240\u6709\u4fe1\u53f7\u3002",
+        "description_cn": "Hourly VIX regime check. Regime shift (Bull/Sideways/Bear) changes all dimension weights."
+      },
+      "overnight_recalibration": {
+        "frequency": "daily",
+        "time": "06:00",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6bcf\u5929\u5f00\u76d8\u524d\u7528\u524d\u4e00\u5929\u7684\u6536\u76d8\u6570\u636e\u91cd\u65b0\u6821\u51c6\u3002\u8ba1\u7b97\u6700\u65b0 MA/RSI/BB\uff0c\u51c6\u5907\u5f53\u5929\u7684\u521d\u59cb\u4fe1\u53f7\u3002",
+        "description_cn": "Pre-market recalibration with previous close data. Fresh MA/RSI/BB for the day's initial signals."
+      }
+    },
+    "risk_management": {
+      "_philosophy": "\u91cf\u5316\u7b56\u7565\u7684\u98ce\u63a7\u4e5f\u662f\u91cf\u5316\u7684\u2014\u2014\u6570\u5b66\u89c4\u5219\uff0c\u4e0d\u662f\u4eba\u4e3a\u5224\u65ad\u3002\u5feb\u8fdb\u5feb\u51fa\uff0c\u5c0f\u6b62\u635f\uff0c\u9ad8\u6362\u624b\u7387\u3002\u6bcf\u7b14\u4ea4\u6613\u90fd\u662f\u7edf\u8ba1\u6982\u7387\u6e38\u620f\u2014\u2014\u5355\u6b21\u4e8f\u635f\u5c0f\uff0c\u9760\u80dc\u7387\u548c\u9891\u7387\u8d5a\u94b1\u3002",
+      "position_exit_rules": [
+        {
+          "name": "signal_reversal",
+          "trigger": "\u4fe1\u53f7\u4ece bullish \u7ffb\u8f6c\u4e3a bearish\uff08\u6216\u53cd\u8fc7\u6765\uff09",
+          "action": "full_exit_and_reverse",
+          "description": "\u91cf\u5316\u7b56\u7565\u6700\u6838\u5fc3\u7684\u9000\u51fa\u89c4\u5219\uff1a\u4fe1\u53f7\u7ffb\u8f6c\u5c31\u9000\u51fa\uff0c\u4e0d\u7559\u604b\u3002\u5982\u679c\u53cd\u5411\u4fe1\u53f7\u4e5f\u5f3a\uff0c\u76f4\u63a5\u53cd\u624b\u3002"
+        },
+        {
+          "name": "tight_stop",
+          "trigger_pct": -0.05,
+          "action": "full_exit",
+          "description": "\u7d27\u6b62\u635f -5%\u3002\u91cf\u5316\u7b56\u7565\u5bb9\u5fcd\u5355\u7b14\u5c0f\u4e8f\u635f\u2014\u2014\u9760\u9ad8\u80dc\u7387\u548c\u591a\u6b21\u4ea4\u6613\u5f25\u8865\u3002\u5bbd\u6b62\u635f\u5728\u7edf\u8ba1\u4e0a\u5bf9\u91cf\u5316\u4e0d\u5229\u3002"
+        },
+        {
+          "name": "quick_profit",
+          "trigger_pct": 0.08,
+          "action": "trim_half",
+          "description": "\u77ed\u671f\u76c8\u5229 8% \u51cf\u534a\u3002\u91cf\u5316\u4e0d\u7b49 '\u5927\u8d62\u5bb6'\u2014\u2014\u9501\u5b9a\u5c0f\u5229\u6da6\uff0c\u4fdd\u6301\u6b63\u671f\u671b\u503c\u3002"
+        },
+        {
+          "name": "time_stop",
+          "trigger": "\u6301\u4ed3\u8d85\u8fc7 10 \u4e2a\u4ea4\u6613\u65e5\u4e14\u65e2\u6ca1\u89e6\u53d1\u6b62\u76c8\u4e5f\u6ca1\u89e6\u53d1\u6b62\u635f",
+          "action": "full_exit",
+          "description": "\u65f6\u95f4\u6b62\u635f\uff1a\u5982\u679c 10 \u5929\u5185\u4fe1\u53f7\u6ca1\u8d77\u4f5c\u7528\uff0c\u8bf4\u660e\u8fd9\u7b14\u4ea4\u6613\u7684 edge \u5df2\u7ecf\u6d88\u5931\u3002\u6e05\u4ed3\u91ca\u653e\u8d44\u91d1\u3002"
+        },
+        {
+          "name": "bollinger_exit",
+          "trigger": "\u4ef7\u683c\u89e6\u78b0\u5e03\u6797\u5e26\u5bf9\u9762\uff08\u505a\u591a\u65f6\u89e6\u78b0\u4e0a\u8f68\uff0c\u505a\u7a7a\u65f6\u89e6\u78b0\u4e0b\u8f68\uff09",
+          "action": "full_exit",
+          "description": "\u5747\u503c\u56de\u5f52\u4fe1\u53f7\u7684\u81ea\u7136\u9000\u51fa\u70b9\u3002\u4ef7\u683c\u56de\u5230\u5e03\u6797\u5e26\u53e6\u4e00\u7aef\u8bf4\u660e\u5747\u503c\u56de\u5f52\u5df2\u5b8c\u6210\u3002"
+        }
+      ],
+      "position_sizing": {
+        "max_single_position_pct": 0.08,
+        "min_cash_reserve_pct": 0.3,
+        "max_sector_pct": 0.25,
+        "sizing_method": "equal_weight",
+        "description": "\u5c0f\u4ed3\u4f4d\u3001\u591a\u5206\u6563\u3002\u6bcf\u53ea\u6700\u591a 8%\uff0c\u73b0\u91d1 30%\uff08\u968f\u65f6\u51c6\u5907\u6293\u65b0\u673a\u4f1a\uff09\u3002\u4e0d\u505a\u96c6\u4e2d\u6295\u6ce8\u2014\u2014\u91cf\u5316\u9760\u7edf\u8ba1\uff0c\u4e0d\u9760\u5355\u7b14\u5927\u8d62\u3002"
+      },
+      "min_confidence": 50
+    }
+  },
+  "D_llm": {
+    "philosophy": "\u8fa9\u8bba\u5236\u5ea6\u662f\u4e3a\u4e86 stress-test \u6bcf\u4e2a\u6295\u8d44\u8bba\u70b9\u3002Bull \u548c Bear \u4e0d\u662f\u5728\u731c\u2014\u2014\u4ed6\u4eec\u5728\u7528\u8bc1\u636e\u8bf4\u670d Judge\u3002Judge \u7528 Bayesian reasoning \u66f4\u65b0\u5148\u9a8c\u6982\u7387\u3002\u8fd9\u79cd\u673a\u5236\u7684\u4ef7\u503c\u5728\u4e8e\u51cf\u5c11\u8ba4\u77e5\u504f\u5dee\u2014\u2014\u4f60\u4e0d\u4f1a\u53ea\u770b\u5230\u81ea\u5df1\u60f3\u770b\u7684\u3002",
+    "schedule": {
+      "debate_session": {
+        "frequency": "daily",
+        "time": "06:30",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6bcf\u5929\u65e9\u76d8\u524d\uff0c\u4e3a\u6bcf\u53ea\u5019\u9009\u80a1\u7968\u8fd0\u884c\u5b8c\u6574\u8fa9\u8bba\uff1aBull \u2192 Bear \u2192 Judge\u3002\u8fd9\u662f\u6700\u8017\u8d44\u6e90\u7684\u73af\u8282\uff083 LLM calls/stock\uff09\uff0c\u4f46\u4e5f\u4ea7\u751f\u6700\u9ad8\u8d28\u91cf\u7684\u4fe1\u53f7\u3002",
+        "description_cn": "Pre-market full debate for each candidate: Bull \u2192 Bear \u2192 Judge. Most resource-intensive but highest signal quality."
+      },
+      "news_sentiment_update": {
+        "frequency": "4h",
+        "market_hours_only": true,
+        "description": "\u6bcf 4 \u5c0f\u65f6\u66f4\u65b0\u65b0\u95fb\u60c5\u7eea\u3002\u4e0d\u91cd\u65b0\u8dd1\u8fa9\u8bba\uff08\u592a\u8d35\uff09\uff0c\u4f46\u5982\u679c\u65b0\u95fb\u60c5\u7eea\u4e0e\u6301\u4ed3\u65b9\u5411\u4e25\u91cd\u77db\u76fe\uff08\u5982\u6301\u591a\u4f46\u91cd\u5927\u5229\u7a7a\uff09\uff0c\u6807\u8bb0\u4e3a\u9700\u8981\u4e0b\u6b21\u8fa9\u8bba\u4f18\u5148\u5ba1\u8bae\u3002",
+        "description_cn": "Update news sentiment every 4 hours. Don't re-run debate (expensive), but flag positions where sentiment contradicts holding direction."
+      },
+      "conviction_decay": {
+        "frequency": "daily",
+        "time": "13:15",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6bcf\u5929\u6536\u76d8\u540e\uff0cJudge \u7684\u4fe1\u5fc3\u5ea6\u8870\u51cf 2%\u3002\u5982\u679c\u4e00\u5468\u5185\u6ca1\u6709\u65b0\u7684\u8fa9\u8bba\u786e\u8ba4\uff0c\u4fe1\u5fc3\u5ea6\u4f1a\u964d\u5230\u9700\u8981\u91cd\u65b0\u8fa9\u8bba\u7684\u6c34\u5e73\u3002\u9632\u6b62 '\u653e\u7740\u4e0d\u7ba1' \u7684\u6301\u4ed3\u3002",
+        "description_cn": "Post-close: Judge's confidence decays 2%/day. Positions without fresh debate confirmation within a week get re-evaluated. Prevents stale holdings."
+      }
+    },
+    "risk_management": {
+      "_philosophy": "\u8fa9\u8bba\u7cfb\u7edf\u7684\u98ce\u63a7\u5185\u5d4c\u5728\u6d41\u7a0b\u4e2d\u2014\u2014Bear agent \u672c\u8eab\u5c31\u662f\u5728\u505a risk assessment\u3002\u5916\u90e8\u98ce\u63a7\u4e3b\u8981\u5904\u7406 '\u8fa9\u8bba\u6ca1\u9884\u89c1\u5230\u7684' \u9ed1\u5929\u9e45\u4e8b\u4ef6\u3002",
+      "position_exit_rules": [
+        {
+          "name": "judge_reversal",
+          "trigger": "Judge \u5728\u65b0\u4e00\u8f6e\u8fa9\u8bba\u4e2d\u7ffb\u8f6c\u4fe1\u53f7\uff08bullish \u2192 bearish\uff09",
+          "action": "full_exit",
+          "description": "\u6700\u6743\u5a01\u7684\u9000\u51fa\u4fe1\u53f7\uff1aJudge \u5728\u770b\u8fc7\u65b0\u8bc1\u636e\u540e\u6539\u53d8\u4e86\u5224\u65ad\u3002\u5982\u679c Bear \u8bf4\u670d\u4e86 Judge\uff0c\u5e94\u8be5\u7acb\u5373\u9000\u51fa\u3002"
+        },
+        {
+          "name": "confidence_floor",
+          "trigger": "Judge \u4fe1\u5fc3\u5ea6\u8870\u51cf\u5230\u4f4e\u4e8e 30%",
+          "action": "full_exit",
+          "description": "\u4fe1\u5fc3\u5ea6\u592a\u4f4e\u8bf4\u660e\u539f\u59cb\u8bba\u70b9\u5df2\u7ecf\u8fc7\u65f6\u3002\u4e0e\u5176\u88ab\u52a8\u7b49\u5f85\uff0c\u4e0d\u5982\u6e05\u4ed3\u91cd\u65b0\u5f00\u59cb\u3002"
+        },
+        {
+          "name": "black_swan_stop",
+          "trigger_pct": -0.12,
+          "action": "full_exit",
+          "description": "\u9ed1\u5929\u9e45\u6b62\u635f -12%\u3002\u8fa9\u8bba\u7cfb\u7edf\u64c5\u957f\u5206\u6790\u5df2\u77e5\u4fe1\u606f\uff0c\u4f46\u65e0\u6cd5\u9884\u6d4b\u7a81\u53d1\u4e8b\u4ef6\uff08\u8d22\u52a1\u9020\u5047\u3001\u76d1\u7ba1\u6253\u51fb\uff09\u3002\u8fd9\u662f safety net\u3002"
+        },
+        {
+          "name": "debate_profit_lock",
+          "trigger_pct": 0.18,
+          "action": "trim_half",
+          "description": "\u76c8\u5229 18% \u51cf\u534a\u3002Judge \u7684 Bayesian \u5206\u6790\u901a\u5e38\u4e0d\u4f1a\u7ed9\u51fa\u6781\u9ad8\u4fe1\u5fc3\uff0c\u6240\u4ee5 18% \u7684\u76c8\u5229\u5df2\u7ecf\u662f\u8d85\u51fa\u9884\u671f\u7684\u597d\u7ed3\u679c\u3002"
+        }
+      ],
+      "position_sizing": {
+        "max_single_position_pct": 0.13,
+        "min_cash_reserve_pct": 0.2,
+        "max_sector_pct": 0.35,
+        "sizing_method": "confidence_scaled",
+        "description": "\u4ed3\u4f4d\u7531 Judge \u7684\u4fe1\u5fc3\u5ea6\u7ebf\u6027\u7f29\u653e\u3002\u9ad8\u4fe1\u5fc3 (80%+) \u2192 \u6ee1\u989d\u914d\u7f6e\u3002\u4e2d\u7b49\u4fe1\u5fc3 (50-80%) \u2192 \u6309\u6bd4\u4f8b\u7f29\u5c0f\u3002\u4f4e\u4fe1\u5fc3 \u2192 \u4e0d\u5f00\u4ed3\u3002"
+      },
+      "min_confidence": 55
+    }
+  },
+  "E_baseline": {
+    "philosophy": "\u4f5c\u4e3a\u5bf9\u7167\u7ec4\uff0cE \u5e94\u8be5\u6a21\u62df\u4e00\u4e2a '\u6700\u666e\u901a\u7684\u6563\u6237\u6295\u8d44\u8005'\u2014\u2014\u7528\u6700\u57fa\u7840\u7684\u6280\u672f\u6307\u6807\uff0c\u6700\u7b80\u5355\u7684\u89c4\u5219\u3002\u5982\u679c\u590d\u6742\u7b56\u7565\u8d62\u4e0d\u4e86\u8fd9\u4e2a\uff0c\u590d\u6742\u5c31\u6ca1\u6709\u4ef7\u503c\u3002\u6240\u4ee5 E \u7684\u89c4\u5219\u8981 '\u6b63\u5e38'\uff0c\u4e0d\u8981\u7279\u610f\u641e\u5dee\u4e5f\u4e0d\u8981\u641e\u597d\u3002",
+    "schedule": {
+      "signal_check": {
+        "frequency": "daily",
+        "time": "06:30",
+        "timezone": "America/Los_Angeles",
+        "description": "\u6bcf\u5929\u68c0\u67e5\u4e00\u6b21\u91d1\u53c9/\u6b7b\u53c9\u548c RSI\u3002\u666e\u901a\u6563\u6237\u4e0d\u4f1a\u6bcf\u5c0f\u65f6\u770b\u76d8\u2014\u2014\u6bcf\u5929\u770b\u4e00\u6b21\u6536\u76d8\u4ef7\u5c31\u591f\u4e86\u3002",
+        "description_cn": "Daily check: Golden/Death Cross + RSI. Regular retail investor checks once a day."
+      }
+    },
+    "risk_management": {
+      "_philosophy": "\u6563\u6237\u901a\u5e38\u4e0d\u7528\u590d\u6742\u7684\u98ce\u63a7\u2014\u2014\u6ca1\u6709 trailing stop\uff0c\u6ca1\u6709\u65f6\u95f4\u6b62\u635f\u3002\u5c31\u662f\u7b80\u5355\u7684 '\u8dcc\u592a\u591a\u5c31\u5356\uff0c\u6da8\u5f88\u591a\u4e5f\u5356\u4e00\u70b9'\u3002\u8fd9\u624d\u662f\u771f\u5b9e\u7684\u5bf9\u7167\u7ec4\u3002",
+      "position_exit_rules": [
+        {
+          "name": "simple_stop_loss",
+          "trigger_pct": -0.1,
+          "action": "full_exit",
+          "description": "\u7b80\u5355\u6b62\u635f -10%\u3002\u5927\u591a\u6570\u7406\u8d22\u987e\u95ee\u5efa\u8bae\u6563\u6237\u8bbe 7-10% \u6b62\u635f\u3002"
+        },
+        {
+          "name": "signal_reversal",
+          "trigger": "\u91d1\u53c9\u53d8\u6b7b\u53c9\uff08MA50 \u4e0b\u7a7f MA200\uff09",
+          "action": "full_exit",
+          "description": "\u6280\u672f\u9762\u7ffb\u8f6c\u5c31\u9000\u51fa\u3002\u8fd9\u662f\u57fa\u7ebf\u7b56\u7565\u7684\u6838\u5fc3\u903b\u8f91\u3002"
+        },
+        {
+          "name": "greed_check",
+          "trigger_pct": 0.3,
+          "action": "trim_half",
+          "description": "\u6da8 30% \u51cf\u534a\u3002'Nobody ever went broke taking profits.' \u2014 \u6563\u6237\u667a\u6167\u3002"
+        }
+      ],
+      "position_sizing": {
+        "max_single_position_pct": 0.15,
+        "min_cash_reserve_pct": 0.15,
+        "max_sector_pct": 0.4,
+        "sizing_method": "equal_weight",
+        "description": "\u7b49\u6743\u5206\u914d\uff0c\u6bd4\u8f83\u5bbd\u677e\u7684\u9650\u5236\u3002\u6563\u6237\u901a\u5e38\u4e0d\u4f1a\u7cbe\u786e\u8ba1\u7b97 Kelly Criterion\u3002"
+      },
+      "min_confidence": 45
+    }
+  },
+  "_global": {
+    "market_hours": {
+      "open": "06:30",
+      "close": "13:00",
+      "timezone": "America/Los_Angeles",
+      "note": "NYSE/NASDAQ: 9:30 AM - 4:00 PM ET = 6:30 AM - 1:00 PM PT"
+    },
+    "paper_trading": {
+      "initial_capital": 10000,
+      "slippage_bps": 5,
+      "commission_per_trade": 0,
+      "note": "Paper trading assumes zero commission (like Robinhood/Schwab) with 5bps slippage for realism"
+    },
+    "data_pipeline": {
+      "sp500_universe": 499,
+      "screener_output": 50,
+      "ai_deep_analysis": 50,
+      "note": "C+E screen all 499 \u2192 select top 50 \u2192 A+B+D do AI analysis on top 50"
+    }
+  }
+}

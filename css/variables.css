@@ -1,0 +1,136 @@
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS & CSS VARIABLES
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Spacing tokens ── */
+:root {
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+}
+
+/* ── Typography tokens ── */
+:root {
+  --text-xs: 0.65rem;
+  --text-sm: 0.78rem;
+  --text-base: 0.86rem;
+  --text-lg: 1.1rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+}
+
+/* ── Shadow tokens ── */
+:root {
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* ── Light mode palette ── */
+:root {
+  --bg: #f8fafc;
+  --bg-elevated: #ffffff;
+  --card: #ffffff;
+  --card-shadow: var(--shadow-sm);
+  --card-hover: var(--shadow-md);
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --text: #1e293b;
+  --text-sec: #64748b;
+  --text-dim: #94a3b8;
+  --green: #10b981;
+  --green-bg: rgba(16,185,129,0.08);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.08);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.08);
+  --brand: #6366f1;
+  --brand-bg: rgba(99,102,241,0.07);
+  --brand-text: #6366f1;
+  --tab-active-text: #fff;
+  --chart-grid: rgba(0,0,0,0.04);
+  --hm-empty: #f1f5f9;
+  --hm-pos: #059669;
+  --hm-neg: #dc2626;
+  --tooltip-bg: #fff;
+  --tooltip-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  --skeleton: #e2e8f0;
+  --skeleton-hi: #f1f5f9;
+  --header-bg: rgba(248,250,252,0.82);
+  --panel-bg: #ffffff;
+  --overlay: rgba(15,23,42,0.25);
+
+  /* Strategy colors */
+  --c-a: #3b82f6;
+  --c-b: #8b5cf6;
+  --c-c: #10b981;
+  --c-d: #f59e0b;
+  --c-e: #ec4899;
+  --c-spy: #94a3b8;
+
+  /* Status colors */
+  --success-bg: rgba(16,185,129,0.1);
+  --success-text: #059669;
+  --warning-bg: rgba(245,158,11,0.1);
+  --warning-text: #d97706;
+  --info-bg: rgba(59,130,246,0.1);
+  --info-text: #2563eb;
+
+  /* Shared tokens */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 9999px;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --dur: 0.3s;
+}
+
+/* ── Dark mode palette ── */
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-elevated: #1e293b;
+  --card: #1e293b;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --card-hover: 0 4px 16px rgba(0,0,0,0.4);
+  --border: #334155;
+  --border-light: #1e293b;
+  --text: #f1f5f9;
+  --text-sec: #94a3b8;
+  --text-dim: #64748b;
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,0.12);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.12);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251,191,36,0.12);
+  --brand: #818cf8;
+  --brand-bg: rgba(129,140,248,0.1);
+  --brand-text: #a5b4fc;
+  --chart-grid: rgba(255,255,255,0.06);
+  --hm-empty: #1e293b;
+  --hm-pos: #34d399;
+  --hm-neg: #f87171;
+  --tooltip-bg: #1e293b;
+  --tooltip-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  --skeleton: #334155;
+  --skeleton-hi: #475569;
+  --header-bg: rgba(15,23,42,0.82);
+  --panel-bg: #1e293b;
+  --overlay: rgba(0,0,0,0.5);
+
+  /* Strategy colors (dark variants) */
+  --c-a: #60a5fa;
+  --c-b: #a78bfa;
+  --c-c: #34d399;
+  --c-d: #fbbf24;
+  --c-e: #f472b6;
+
+  /* Status colors (dark variants) */
+  --success-bg: rgba(52,211,153,0.15);
+  --success-text: #34d399;
+  --warning-bg: rgba(251,191,36,0.15);
+  --warning-text: #fbbf24;
+  --info-bg: rgba(96,165,250,0.15);
+  --info-text: #60a5fa;
+}

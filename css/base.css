@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE STYLES
+   ═══════════════════════════════════════════════════════ */
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); opacity: .6; }
+  50%  { transform: scale(1.4); opacity: 0; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   UTILITY CLASSES
+   ═══════════════════════════════════════════════════════ */
+.pos  { color: var(--green); }
+.neg  { color: var(--red); }
+.neut { color: var(--text-dim); }
+
+/* ═══════════════════════════════════════════════════════
+   LOADING / ERROR / EMPTY STATES
+   ═══════════════════════════════════════════════════════ */
+.ld {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  font-size: var(--text-base);
+}
+.ld::before {
+  content: '';
+  display: block;
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+.err {
+  background: var(--red-bg);
+  border: 1px solid var(--red);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+  color: var(--red);
+  margin: 20px 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--text-dim);
+  font-size: .84rem;
+}
+.empty .ei {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+  opacity: .5;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════ */
+.ft {
+  text-align: center;
+  padding: 18px;
+  font-size: .7rem;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  transition: border-color var(--dur);
+}
