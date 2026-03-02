@@ -176,7 +176,7 @@
 
   /* ── Touch: minimum 44px touch targets ── */
   .tab-btn, .theme-btn, .lang-btn, .dp-close,
-  .pill-btn, .tt-card, .ti, button { min-height: 44px; }
+  .pill-btn, .tt-card, .ti, button:not(.carousel-dot) { min-height: 44px; }
 }
 
 /* ═══════════════════════════════════════════════════════
